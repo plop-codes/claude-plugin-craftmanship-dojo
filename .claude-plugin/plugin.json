@@ -1,0 +1,8 @@
+{
+  "name": "onboarding-backend",
+  "description": "Guide interactif d'onboarding pour nouveaux developpeurs backend. Phases configurables, propositions de refactoring selectionnables, fichiers de reference embarques et remplacables.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Plop : David Robert"
+  }
+}

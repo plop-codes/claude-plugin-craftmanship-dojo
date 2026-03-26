@@ -1,0 +1,35 @@
+{
+  "language": "fr",
+
+  "proposals": {
+    "vertical-slices": true,
+    "controller-purity": true,
+    "encapsulation": true,
+    "static-factory": true,
+    "value-objects": true,
+    "command-result": true,
+    "unit-tests": true,
+    "sql-reads": true
+  },
+
+  "references": {
+    "skills": {
+      "vertical-slice": null,
+      "ddd-patterns": null,
+      "architecture": null
+    },
+    "examples": {
+      "testApp": null,
+      "commandResult": null,
+      "dsl": null,
+      "e2eDriver": null,
+      "e2eSpec": null,
+      "useCase": null,
+      "controller": null,
+      "entity": null,
+      "valueObject": null,
+      "inMemoryRepository": null,
+      "useCaseDriver": null
+    }
+  }
+}
