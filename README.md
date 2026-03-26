@@ -4,6 +4,26 @@ Plugin Claude Code pour l'onboarding de nouveaux developpeurs backend.
 
 Guide interactif en 6 phases : recuperation du scenario depuis un ticket GitHub, generation d'un test e2e comme rail de securite, explication pedagogique du pattern DSL/Driver/Spec, developpement libre, validation, puis propositions de refactoring educatives.
 
+## Pourquoi ce plugin ?
+
+### Eliminer les PR asynchrones
+
+Les code reviews asynchrones par pull request posent des problemes bien connus :
+
+- **Feedback differe** — le developpeur a change de contexte quand les retours arrivent, ce qui rallonge les cycles et fragmente l'attention
+- **Reviews superficielles** — sous pression de ne pas bloquer l'equipe, les reviewers survolent le code au lieu de l'analyser en profondeur
+- **Effet gatekeeper** — la review devient un point de controle hierarchique plutot qu'un moment d'apprentissage
+- **Ping-pong de commentaires** — les allers-retours asynchrones sur un detail de design prennent des jours au lieu de minutes
+- **Conventions implicites** — les pratiques attendues ne sont decouvertes qu'au moment de la review, trop tard pour les integrer naturellement
+
+### Faciliter le Trunk-Based Development
+
+Ce plugin permet de travailler en Trunk-Based Development en toute confiance : le developpeur sait que sa feature fonctionne grace au test e2e genere en test-first, et peut pusher directement sur trunk. Pas de branche longue, pas de merge penible, pas de PR qui attend.
+
+### Faire progresser les equipes sans micro-management
+
+Le refactoring est propose de maniere educative apres que la feature fonctionne. Les pratiques du projet (vertical slices, DDD, encapsulation...) sont enseignees progressivement, au fil des features, sans jamais bloquer le push. Le developpeur apprend en faisant, a son rythme, guide par le plugin — pas par un senior qui fait office de gatekeeper.
+
 ## Installation
 
 ```bash
