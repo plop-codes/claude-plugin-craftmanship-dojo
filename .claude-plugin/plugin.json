@@ -1,6 +1,6 @@
 {
-  "name": "onboarding-backend",
-  "description": "Guide interactif d'onboarding pour nouveaux developpeurs backend. Phases configurables, propositions de refactoring selectionnables, fichiers de reference embarques et remplacables.",
+  "name": "craftmanship-dojo",
+  "description": "Plugin Claude Code qui remplace les PR asynchrones par un coaching interactif : test e2e en test-first, dev libre, puis refactoring educatif — pour des equipes qui pushent sur trunk en confiance.",
   "version": "1.0.0",
   "author": {
     "name": "Plop : David Robert"

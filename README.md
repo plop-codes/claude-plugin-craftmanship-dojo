@@ -1,6 +1,6 @@
-# onboarding-backend
+# craftmanship-dojo
 
-Plugin Claude Code pour l'onboarding de nouveaux developpeurs backend.
+Plugin Claude Code qui remplace les PR asynchrones par un coaching interactif : test e2e en test-first, dev libre, puis refactoring educatif — pour des equipes qui pushent sur trunk en confiance.
 
 Guide interactif en 6 phases : recuperation du scenario depuis un ticket GitHub, generation d'un test e2e comme rail de securite, explication pedagogique du pattern DSL/Driver/Spec, developpement libre, validation, puis propositions de refactoring educatives.
 
@@ -27,12 +27,18 @@ Le refactoring est propose de maniere educative apres que la feature fonctionne.
 ## Installation
 
 ```bash
-claude --plugin-dir ./onboarding-backend
+git clone https://github.com/plop-codes/claude-plugin-craftmanship-dojo.git
 ```
 
-Puis invoquer :
+Puis dans votre projet, lancer Claude Code avec le plugin :
+
+```bash
+claude --plugin-dir /chemin/vers/claude-plugin-craftmanship-dojo
 ```
-/onboarding-backend:onboarding
+
+Invoquer :
+```
+/craftmanship-dojo:onboarding
 ```
 
 ## Configuration
