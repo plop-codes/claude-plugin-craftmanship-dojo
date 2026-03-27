@@ -1,10 +1,16 @@
 # Phase 1 : Recuperation du scenario
 
-## 1.1 Demander le numero du ticket
+## 1.1 Demander le scenario
 
-Demande a l'utilisateur le numero du ticket GitHub avec `AskUserQuestion`.
+Demande a l'utilisateur son scenario avec `AskUserQuestion` :
 
-## 1.2 Recuperer le ticket
+> "Comment veux-tu me fournir le scenario ?\n- Donne-moi un **numero de ticket GitHub** (ex: `42` ou `#42`)\n- Ou **colle directement le scenario** ici (Gherkin, texte libre, specs...)"
+
+## 1.2 Recuperer le scenario
+
+### Option A : Ticket GitHub
+
+Si l'utilisateur donne un numero de ticket :
 
 **Ticket unique :**
 ```bash
@@ -41,17 +47,20 @@ gh api graphql -f query='query {
 }' --jq '.data.repository.issue'
 ```
 
-## 1.3 Selectionner le scenario
-
+**Selection du scenario :**
 - Si ticket unique → utilise ce scenario
 - Si User Story → filtre les sub-issues `state: OPEN` avec `issueType.name == "Scenario / critere d'acceptation"`, puis prend le **premier** scenario trouve
 
-## 1.4 Verifier le label
+### Option B : Scenario colle en texte
 
-**Regle critique** : quel que soit le label du scenario (`backend-usecase-test`, `backend-e2e-test`), ce skill genere **TOUJOURS** un test e2e backend.
+Si l'utilisateur colle directement le scenario (Gherkin, specs, texte libre), l'utiliser tel quel. Pas besoin de `gh`.
 
-**Exception** : si le label est `ui-test`, **REFUSE** :
-> "Ce skill est reserve au backend. Les tests UI ne sont pas supportes par le skill onboarding. Choisis un scenario avec un label backend."
+## 1.4 Verifier le perimetre
+
+**Regle critique** : ce skill genere **TOUJOURS** un test e2e backend.
+
+Si le scenario provient d'un ticket GitHub avec le label `ui-test`, ou si le scenario colle decrit clairement un test UI (interactions navigateur, clics, formulaires...), **REFUSE** :
+> "Ce skill est reserve au backend. Les tests UI ne sont pas supportes par le skill onboarding. Choisis un scenario backend."
 
 ## 1.5 Extraire le contexte
 

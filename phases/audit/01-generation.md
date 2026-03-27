@@ -1,6 +1,6 @@
 # Phase 2 : Generation des fichiers de propositions
 
-La roadmap a ete validee par le tech lead. Generer les fichiers de propositions et mettre a jour la configuration.
+Les etapes ont ete validees par le tech lead. Generer les fichiers de propositions et mettre a jour la configuration.
 
 ---
 
@@ -17,18 +17,17 @@ Si le tech lead refuse, conserver les anciens fichiers et ajouter les nouveaux a
 
 ## Etape 2 : Generer les fichiers de propositions
 
-Pour chaque etape de la roadmap validee, creer un fichier dans `phases/06-refactoring/proposals/`.
+Pour chaque etape validee, creer un fichier dans `phases/06-refactoring/proposals/`.
 
 ### Nommage des fichiers
 
 Format : `{numero sur 2 chiffres}-{slug}.md`
 
 Exemples :
-- `01-controller-purity.md`
-- `02-use-case-extraction.md`
-- `03-vertical-slices.md`
-- `04-e2e-test-infrastructure.md`
-- `05-encapsulation.md`
+- `01-vertical-slices.md`
+- `02-entity-encapsulation.md`
+- `03-value-objects.md`
+- `04-in-memory-repositories.md`
 
 ### Format de chaque fichier
 
@@ -49,11 +48,11 @@ Chaque fichier DOIT suivre exactement ce format (compatible avec le skill onboar
 
 **Inspecter** : {description precise de ce qu'il faut verifier dans le code du developpeur en onboarding — quels fichiers regarder, quels patterns chercher}
 
-**Skip si** : {conditions ou cette proposition ne s'applique pas — par exemple si le dev a deja bien fait}
+**Skip si** : {conditions ou cette proposition ne s'applique pas — par exemple si le dev a deja applique cette pratique}
 
-**Pourquoi** : {explication pedagogique — pourquoi ce refactoring est utile, ce qu'il apporte, ce qu'il debloque. Ecrire comme si on s'adressait a un developpeur qui decouvre le concept.}
+**Pratique enseignee** : {explication pedagogique — quelle convention de la codebase le dev apprend ici, pourquoi l'equipe fait comme ca, avec des exemples de fichiers existants dans le projet qui illustrent cette pratique}
 
-**Exemple** : {quoi montrer — fichiers de reference a lire et montrer, ou extraits de code du projet a utiliser comme modele. Privilegier les fichiers de reference embarques quand ils existent.}
+**Exemple** : {quoi montrer — fichiers existants de la codebase qui servent de modele. Privilegier les fichiers reels du projet plutot que les fichiers de reference embarques, puisque l'objectif est d'enseigner les pratiques de CETTE codebase.}
 
 **STOP** — attendre decision
 ```
@@ -61,13 +60,10 @@ Chaque fichier DOIT suivre exactement ce format (compatible avec le skill onboar
 ### Regles de generation
 
 1. **Chaque fichier doit etre autonome** : lisible et comprehensible sans contexte exterieur
-2. **Les instructions doivent etre concretes** : citer des patterns de fichiers specifiques au langage/framework detecte, pas des instructions generiques
-3. **Le "Pourquoi" doit etre pedagogique** : expliquer le concept comme a un developpeur qui le decouvre pour la premiere fois
-4. **Les references doivent pointer vers les fichiers existants** du plugin quand c'est pertinent :
-   - Skills : `vertical-slice`, `ddd-patterns`, `architecture`
-   - Exemples : `testApp`, `commandResult`, `dsl`, `e2eDriver`, `e2eSpec`, `useCase`, `controller`, `entity`, `valueObject`, `inMemoryRepository`, `useCaseDriver`
-5. **Pour les etapes sans reference embarquee** (specifiques a la codebase ou au framework), decrire clairement le pattern attendu dans le fichier lui-meme
-6. **Le "Inspecter" doit etre adapte au framework** : utiliser les patterns de detection du framework identifie dans la phase d'analyse
+2. **Les instructions doivent etre concretes** : citer des patterns de fichiers specifiques au langage/framework detecte
+3. **La "Pratique enseignee" doit etre pedagogique** : expliquer la convention comme a un developpeur qui decouvre la codebase pour la premiere fois
+4. **Privilegier les exemples du projet** : les fichiers existants de la codebase sont les meilleurs exemples puisqu'ils montrent exactement comment l'equipe fait. Les fichiers de reference embarques du plugin ne sont utiles que si la codebase n'a pas d'exemple suffisant.
+5. **Le "Inspecter" doit etre adapte au framework** : utiliser les patterns de detection du framework identifie dans la phase d'analyse
 
 ---
 
@@ -92,23 +88,14 @@ Remplacer le contenu de `proposals` par les nouvelles cles, une par etape valide
 Les slugs doivent correspondre exactement aux noms de fichiers (sans numero ni extension).
 Exemple : fichier `03-vertical-slices.md` → cle `vertical-slices`.
 
-### Section `audit` (ajouter si absente)
+### Section `audit`
 
-Ajouter ou mettre a jour la section `audit` avec les paths scannes et les niveaux evalues :
+Mettre a jour la section `audit` avec les paths scannes :
 
 ```json
 {
   "audit": {
-    "scan-paths": ["{paths scannes}"],
-    "default-levels": {
-      "layer-separation": true,
-      "usecases-screaming-archi": true,
-      "e2e-tests": true,
-      "rich-domain-model": true,
-      "unit-tests-clean-archi": true,
-      "tdd": true,
-      "ddd": true
-    }
+    "scan-paths": ["{paths scannes}"]
   }
 }
 ```
@@ -137,7 +124,7 @@ Presenter un resume au tech lead :
 
 > **Generation terminee.**
 >
-> **{N} propositions creees** dans `phases/06-refactoring/proposals/` :
+> **{N} etapes creees** dans `phases/06-refactoring/proposals/` :
 > - `01-{slug}.md` — {titre}
 > - `02-{slug}.md` — {titre}
 > - ...

@@ -1,167 +1,88 @@
-# craftmanship-dojo
+# Craftmanship Dojo
 
-Plugin Claude Code qui remplace les PR asynchrones par un coaching interactif : test e2e en test-first, dev libre, puis refactoring educatif — pour des equipes qui pushent sur trunk en confiance.
+Plugin Claude Code qui coach les developpeurs en temps reel pendant qu'ils codent, au lieu de les corriger apres coup en code review.
 
-Guide interactif en 6 phases : recuperation du scenario depuis un ticket GitHub, generation d'un test e2e comme rail de securite, explication pedagogique du pattern DSL/Driver/Spec, developpement libre, validation, puis propositions de refactoring educatives.
+**Le principe** : un test e2e est genere en test-first comme rail de securite, le developpeur implemente librement, puis des propositions de refactoring lui apprennent les bonnes pratiques — le tout sans quitter son terminal.
 
-## Pourquoi ce plugin ?
+## Le probleme
 
-### Eliminer les PR asynchrones
+Les code reviews par pull request ne marchent pas bien :
 
-Les code reviews asynchrones par pull request posent des problemes bien connus :
+- Le feedback arrive trop tard — le developpeur a deja change de contexte
+- Les reviews sont superficielles — personne ne veut bloquer l'equipe
+- Les conventions s'apprennent au moment de la review, quand c'est trop tard
+- Les allers-retours asynchrones sur un detail de design prennent des jours
 
-- **Feedback differe** — le developpeur a change de contexte quand les retours arrivent, ce qui rallonge les cycles et fragmente l'attention
-- **Reviews superficielles** — sous pression de ne pas bloquer l'equipe, les reviewers survolent le code au lieu de l'analyser en profondeur
-- **Effet gatekeeper** — la review devient un point de controle hierarchique plutot qu'un moment d'apprentissage
-- **Ping-pong de commentaires** — les allers-retours asynchrones sur un detail de design prennent des jours au lieu de minutes
-- **Conventions implicites** — les pratiques attendues ne sont decouvertes qu'au moment de la review, trop tard pour les integrer naturellement
-
-### Faciliter le Trunk-Based Development
-
-Ce plugin permet de travailler en Trunk-Based Development en toute confiance : le developpeur sait que sa feature fonctionne grace au test e2e genere en test-first, et peut pusher directement sur trunk. Pas de branche longue, pas de merge penible, pas de PR qui attend.
-
-### Faire progresser les equipes sans micro-management
-
-Le refactoring est propose de maniere educative apres que la feature fonctionne. Les pratiques du projet (vertical slices, DDD, encapsulation...) sont enseignees progressivement, au fil des features, sans jamais bloquer le push. Le developpeur apprend en faisant, a son rythme, guide par le plugin — pas par un senior qui fait office de gatekeeper.
+**Ce plugin remplace ce cycle par du coaching en temps reel.** Le developpeur apprend en faisant, guide par Claude, et peut pusher directement sur trunk en confiance.
 
 ## Installation
+
+Cloner le plugin :
 
 ```bash
 git clone https://github.com/plop-codes/claude-plugin-craftmanship-dojo.git
 ```
 
-Puis dans votre projet, lancer Claude Code avec le plugin :
+Lancer Claude Code avec le plugin :
 
 ```bash
 claude --plugin-dir /chemin/vers/claude-plugin-craftmanship-dojo
 ```
 
-Invoquer :
-```
-/craftmanship-dojo:onboarding
-```
+## Les 2 skills
 
-## Configuration
+### `/craftmanship-dojo:audit` — Adapter l'onboarding a votre codebase
 
-Editer `config.json` a la racine du plugin.
+Analyse les pratiques et conventions deja en place dans votre codebase, puis genere des etapes de refactoring qui les enseignent progressivement a un developpeur qui ne les maitrise pas encore. Fonctionne sur n'importe quel langage backend (TypeScript, Java, C#, Go, Python...).
 
-### Propositions de refactoring
+1. Scanne la codebase pour identifier les patterns et conventions utilises par l'equipe
+2. Propose des etapes de refactoring qui enseignent ces pratiques, dans un ordre pedagogique
+3. Le tech lead valide ou ajuste les etapes
+4. Les etapes generees remplacent celles par defaut dans l'onboarding
 
-Activer/desactiver les propositions de la phase 6 :
+C'est le point de depart : le tech lead lance l'audit une fois, et l'onboarding est calibre sur les pratiques reelles du projet.
 
-```json
-{
-  "proposals": {
-    "vertical-slices": true,
-    "controller-purity": true,
-    "encapsulation": false,
-    "static-factory": true,
-    "value-objects": true,
-    "command-result": true,
-    "unit-tests": false,
-    "sql-reads": true
-  }
-}
-```
+### `/craftmanship-dojo:onboarding` — Coaching du developpeur
 
-### Fichiers de reference
+Guide interactif en 6 phases pour implementer une feature backend :
 
-Par defaut, le plugin embarque des fichiers d'exemple. Pour utiliser vos propres fichiers, remplacez `null` par un chemin relatif au projet :
+| Phase | Quoi | Qui |
+|-------|------|-----|
+| 1. Scenario | Recupere le scenario (ticket GitHub ou texte colle) | Claude |
+| 2. Test e2e | Genere les fichiers DSL / Driver / Spec | Claude |
+| 3. Explication | Explique chaque composant du test genere | Discussion |
+| 4. Dev libre | Le developpeur implemente la feature | Developpeur |
+| 5. Validation | Lance les tests e2e pour verifier | Claude |
+| 6. Refactoring | Propose des ameliorations educatives | Developpeur (guide) |
 
-```json
-{
-  "references": {
-    "skills": {
-      "vertical-slice": null,
-      "ddd-patterns": ".claude/skills/my-ddd/SKILL.md",
-      "architecture": null
-    },
-    "examples": {
-      "testApp": "backend/src/shared/test/e2e/testApp.ts",
-      "useCase": "backend/src/myFeature/myFeature.useCase.ts",
-      "controller": "backend/src/myFeature/myFeature.controller.ts",
-      "entity": null,
-      "valueObject": null,
-      "dsl": null,
-      "e2eDriver": null,
-      "e2eSpec": null,
-      "commandResult": null,
-      "inMemoryRepository": null,
-      "useCaseDriver": null
-    }
-  }
-}
-```
+## Les etapes de refactoring
 
-## Structure
+La phase 6 de l'onboarding propose des etapes de refactoring progressives. Le but : enseigner au developpeur les pratiques de la codebase en le guidant pas a pas.
+
+Par defaut, le plugin embarque 8 etapes pensees pour un projet NestJS (vertical slices, encapsulation, value objects, etc.). Pour que ces etapes refletent les pratiques reelles de votre equipe, lancez `/craftmanship-dojo:audit` — les etapes par defaut seront remplacees par des etapes generees depuis votre codebase.
+
+## Structure du plugin
 
 ```
-onboarding-backend/
-├── plugin.json                    # Manifeste
-├── config.json                    # Configuration (proposals + references + audit)
+craftmanship-dojo/
+├── .claude-plugin/
+│   └── plugin.json               # Manifeste du plugin
+├── config.json                   # Configuration
 ├── skills/
-│   ├── onboarding/SKILL.md        # Orchestrateur onboarding
-│   └── audit/SKILL.md             # Orchestrateur audit (diagnostic + generation)
+│   ├── onboarding/SKILL.md       # Skill onboarding (6 phases)
+│   └── audit/SKILL.md            # Skill audit (analyse des pratiques)
 ├── phases/
-│   ├── 01-scenario-retrieval.md
-│   ├── 02-test-generation.md
-│   ├── 03-pedagogical-explanation.md
-│   ├── 04-free-development.md
-│   ├── 05-validation.md
+│   ├── 01 a 05                   # Phases du coaching
 │   ├── 06-refactoring/
 │   │   ├── preambule.md
 │   │   ├── closure.md
-│   │   └── proposals/             # Propositions (generees par /audit ou manuelles)
-│   └── audit/
-│       ├── 00-analysis-guide.md   # Guide d'analyse de la codebase
-│       └── 01-generation.md       # Generation des fichiers de propositions
-├── references/
-│   ├── skills/                    # 3 skills embarques
-│   └── examples/                  # 11 fichiers TypeScript embarques
-└── README.md
+│   │   └── proposals/            # 8 propositions de refactoring
+│   └── audit/                    # Guide d'analyse + generation
+└── references/
+    ├── skills/                   # 3 skills embarques
+    └── examples/                 # 11 fichiers TypeScript d'exemple
 ```
 
-## Les 2 skills
+## Licence
 
-### `/onboarding` — Coaching interactif du developpeur
-
-Guide un nouveau developpeur a travers l'implementation d'une feature backend, de bout en bout. Utilise les propositions de refactoring configurees (par defaut ou generees par `/audit`).
-
-### `/audit` — Diagnostic et generation de roadmap refactoring
-
-Outil pour tech leads. Analyse une codebase backend et genere des propositions de refactoring pedagogiquement ordonnees pour l'onboarding.
-
-**Flow :**
-1. Scan de la codebase (langage, framework, structure, patterns)
-2. Diagnostic sur 7 dimensions (couches, use cases, tests E2E, rich domain, tests unitaires, TDD, DDD)
-3. Presentation de la roadmap au tech lead pour validation
-4. Generation des fichiers de propositions dans `phases/06-refactoring/proposals/` et mise a jour de `config.json`
-
-**Agnostique** : fonctionne sur n'importe quel langage et framework backend (TypeScript, Java, C#, Go, Python...).
-
-Invoquer :
-```
-/craftmanship-dojo:audit
-```
-
-## Les 6 phases
-
-| Phase | But | Qui code ? |
-|-------|-----|-----------|
-| 1. Recuperation du scenario | Identifier le ticket et extraire le Gherkin | Claude |
-| 2. Generation du test e2e | Creer les fichiers DSL/Driver/Spec e2e | Claude |
-| 3. Explication pedagogique | Comprendre chaque composant du test | Personne (discussion) |
-| 4. Developpement libre | Implementer la feature | Le developpeur |
-| 5. Validation | Verifier que le test e2e passe | Claude lance les tests |
-| 6. Propositions de refactoring | Ameliorer le code etape par etape | Le developpeur (guide) |
-
-## Les 8 propositions de refactoring
-
-1. Vertical Slices — organisation du code
-2. Controller sans logique metier — separation des responsabilites
-3. Encapsulation — principes orientes objet
-4. Static Factory — pattern `Entity.create()`
-5. Value Objects — extraction des validations
-6. CommandResult — gestion d'erreurs typee (pas d'exceptions)
-7. Tests unitaires — use case testing avec repository in-memory
-8. SQL pour les lectures — SQL brut au lieu de l'ORM
+MIT
