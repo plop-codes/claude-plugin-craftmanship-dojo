@@ -5,5 +5,5 @@
   "author": {
     "name": "Plop : David Robert"
   },
-  "skills": "skills"
+  "skills": "./skills/"
 }
