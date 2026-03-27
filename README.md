@@ -17,13 +17,25 @@ Code reviews via pull requests don't work well:
 
 ## Installation
 
-Clone the plugin:
+### Permanent install (recommended)
+
+Add the marketplace:
 
 ```bash
-git clone https://github.com/plop-codes/claude-plugin-craftmanship-dojo.git
+/plugin marketplace add https://github.com/plop-codes/claude-plugin-craftmanship-dojo
 ```
 
-Launch Claude Code with the plugin:
+Install the plugin:
+
+```bash
+/plugin install craftmanship-dojo --scope user
+```
+
+The plugin will persist across sessions and be available in all your projects.
+
+### Local development
+
+To test changes without installing:
 
 ```bash
 claude --plugin-dir /path/to/claude-plugin-craftmanship-dojo
