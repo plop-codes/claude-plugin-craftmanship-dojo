@@ -1,0 +1,17 @@
+{
+  "name": "Plop Plugins",
+  "owner": {
+    "name": "Plop : David Robert"
+  },
+  "plugins": [
+    {
+      "name": "craftmanship-dojo",
+      "version": "1.0.0",
+      "description": "Claude Code plugin that replaces async PR reviews with real-time interactive coaching: test-first e2e, free development, then educational refactoring.",
+      "source": {
+        "type": "github",
+        "repo": "plop-codes/claude-plugin-craftmanship-dojo"
+      }
+    }
+  ]
+}
