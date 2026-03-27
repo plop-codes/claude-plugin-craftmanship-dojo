@@ -1,35 +1,35 @@
-# Phase 2 : Generation du test e2e
+# Phase 2: E2E test generation
 
-## References necessaires
+## Required references
 
-- `dsl` : exemple de fichier DSL
-- `e2eDriver` : exemple de driver e2e
-- `e2eSpec` : exemple de spec e2e
-- `testApp` : infrastructure de test
+- `dsl`: example DSL file
+- `e2eDriver`: example e2e driver
+- `e2eSpec`: example e2e spec
+- `testApp`: test infrastructure
 
-## 2.1 Identifier le vertical slice
+## 2.1 Identify the vertical slice
 
-Depuis le scenario, identifie :
-- Le **domain** (ex: `core`, `generic`)
-- Le **bounded context** (ex: `orderRegistration`, `identityAndAccessManagement`)
-- La **feature** (ex: `createUserAccount`, `startRegisterEmptyOrder`)
+From the scenario, identify:
+- The **domain** (e.g., `core`, `generic`)
+- The **bounded context** (e.g., `orderRegistration`, `identityAndAccessManagement`)
+- The **feature** (e.g., `createUserAccount`, `startRegisterEmptyOrder`)
 
-Le test sera place dans : `backend/src/{domain}/{boundedContext}/{feature}/test/`
+The test will be placed in: `backend/src/{domain}/{boundedContext}/{feature}/test/`
 
-## 2.2 Generer les 3 fichiers
+## 2.2 Generate the 3 files
 
-**Fichier 1 : DSL** — `test/{feature}.dsl.ts`
+**File 1: DSL** — `test/{feature}.dsl.ts`
 
-Une interface par scenario. Methodes `given`/`when`/`then`.
+One interface per scenario. `given`/`when`/`then` methods.
 
-Conventions de nommage :
-- **Actions de l'acteur → premiere personne** : `whenICreateOrder()`, `thenImInformedOfError()`
-- **Etats du systeme → impersonnel** : `givenProductsExist()`, `givenSystemIsOperational()`
-- Les methodes `when` prennent en parametre **uniquement le champ pertinent au scenario**. Les autres champs sont hardcodes dans le driver.
+Naming conventions:
+- **Actor actions → first person**: `whenICreateOrder()`, `thenImInformedOfError()`
+- **System states → impersonal**: `givenProductsExist()`, `givenSystemIsOperational()`
+- `when` methods take as parameter **only the field relevant to the scenario**. Other fields are hardcoded in the driver.
 
-Reference : lire le fichier de reference `dsl` (resolu depuis le config).
+Reference: read the `dsl` reference file (resolved from config).
 
-**Fichier 2 : Driver e2e** — `test/e2e/{feature}.e2eDriver.ts`
+**File 2: E2E Driver** — `test/e2e/{feature}.e2eDriver.ts`
 
 ```typescript
 import request from 'supertest';
@@ -46,9 +46,9 @@ export class ScenarioNameE2eDriver implements ScenarioDSL {
     this.testApp = await TestApp.start();
   }
 
-  // given... → setup (insertion SQL, config, etc.)
-  // when...  → appel HTTP via supertest
-  // then...  → assertions HTTP status + query SQL
+  // given... → setup (SQL insertion, config, etc.)
+  // when...  → HTTP call via supertest
+  // then...  → HTTP status assertions + SQL query
 
   async cleanup() {
     await this.testApp?.cleanup();
@@ -56,28 +56,28 @@ export class ScenarioNameE2eDriver implements ScenarioDSL {
 }
 ```
 
-**Regles du driver :**
-- Utilise `TestApp` de `@src/shared/test/e2e/testApp` — **jamais** `PostgreSqlContainer` directement
-- `when` : `request(this.testApp.app.getHttpServer()).post('/api/...').send({...})`
-- `then` : verifie `this.response.status` + `this.testApp.app.get(DataSource).query('SELECT ...')`
-- `cleanup()` appelle `this.testApp?.cleanup()`
+**Driver rules:**
+- Use `TestApp` from `@src/shared/test/e2e/testApp` — **never** `PostgreSqlContainer` directly
+- `when`: `request(this.testApp.app.getHttpServer()).post('/api/...').send({...})`
+- `then`: verify `this.response.status` + `this.testApp.app.get(DataSource).query('SELECT ...')`
+- `cleanup()` calls `this.testApp?.cleanup()`
 
-Reference : lire le fichier de reference `e2eDriver` (resolu depuis le config).
+Reference: read the `e2eDriver` reference file (resolved from config).
 
-**Fichier 3 : Spec** — `test/e2e/{feature}.e2e-spec.ts`
+**File 3: Spec** — `test/e2e/{feature}.e2e-spec.ts`
 
 ```typescript
 import { describe, test, afterEach } from 'vitest';
 import { ScenarioNameE2eDriver } from './{feature}.e2eDriver';
 
-describe('Description en francais du scenario', () => {
+describe('Scenario description', () => {
   let driver: ScenarioNameE2eDriver;
 
   afterEach(async () => {
     await driver?.cleanup();
   });
 
-  test('nom du scenario en francais', async () => {
+  test('scenario name', async () => {
     driver = new ScenarioNameE2eDriver();
     await driver.givenSystemIsOperational();
     // ... given/when/then
@@ -85,27 +85,27 @@ describe('Description en francais du scenario', () => {
 });
 ```
 
-**Regles du spec :**
-- Pas de logique, pas d'assertions, pas d'imports framework — juste l'orchestration
-- `afterEach` avec `cleanup()` obligatoire
-- Test body : instancie le driver, appelle les methodes dans l'ordre
+**Spec rules:**
+- No logic, no assertions, no framework imports — just orchestration
+- `afterEach` with `cleanup()` is mandatory
+- Test body: instantiate the driver, call methods in order
 
-Reference : lire le fichier de reference `e2eSpec` (resolu depuis le config).
+Reference: read the `e2eSpec` reference file (resolved from config).
 
-## 2.3 Lancer le test — doit etre RED
-
-```bash
-cd backend && npx vitest run --config vitest.e2e.config.ts {chemin du spec}
-```
-
-Le test doit echouer (erreur de compilation ou d'assertion). Si le test passe, quelque chose ne va pas — investiguer.
-
-## 2.4 Committer le test
+## 2.3 Run the test — must be RED
 
 ```bash
-git add {les 3 fichiers}
-git commit -m "tech: backend: test e2e onboarding {nom du scenario} (#{id})"
+cd backend && npx vitest run --config vitest.e2e.config.ts {spec path}
 ```
 
-Afficher :
-> "Le test e2e est en place et echoue (RED). C'est normal — le code de production n'existe pas encore."
+The test must fail (compilation or assertion error). If the test passes, something is wrong — investigate.
+
+## 2.4 Commit the test
+
+```bash
+git add {the 3 files}
+git commit -m "tech: backend: e2e test onboarding {scenario name} (#{id})"
+```
+
+Display:
+> "The e2e test is in place and failing (RED). This is expected — the production code doesn't exist yet."

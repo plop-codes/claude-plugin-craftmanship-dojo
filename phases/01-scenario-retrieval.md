@@ -1,29 +1,29 @@
-# Phase 1 : Recuperation du scenario
+# Phase 1: Scenario retrieval
 
-## 1.1 Demander le scenario
+## 1.1 Ask for the scenario
 
-Demande a l'utilisateur son scenario avec `AskUserQuestion` :
+Ask the user for their scenario using `AskUserQuestion`:
 
-> "Comment veux-tu me fournir le scenario ?\n- Donne-moi un **numero de ticket GitHub** (ex: `42` ou `#42`)\n- Ou **colle directement le scenario** ici (Gherkin, texte libre, specs...)"
+> "How would you like to provide the scenario?\n- Give me a **GitHub ticket number** (e.g., `42` or `#42`)\n- Or **paste the scenario directly** here (Gherkin, free text, specs...)"
 
-## 1.2 Recuperer le scenario
+## 1.2 Retrieve the scenario
 
-### Option A : Ticket GitHub
+### Option A: GitHub ticket
 
-Si l'utilisateur donne un numero de ticket :
+If the user provides a ticket number:
 
-**Ticket unique :**
+**Single ticket:**
 ```bash
 gh issue view <id> --json title,body,labels
 ```
 
-**User Story (avec sub-issues) :**
-Recupere le owner et repo :
+**User Story (with sub-issues):**
+Retrieve owner and repo:
 ```bash
 gh repo view --json owner,name --jq '.owner.login + " " + .name'
 ```
 
-Puis recupere les sub-issues :
+Then retrieve sub-issues:
 ```bash
 gh api graphql -f query='query {
   repository(owner: "{owner}", name: "{repo}") {
@@ -47,34 +47,34 @@ gh api graphql -f query='query {
 }' --jq '.data.repository.issue'
 ```
 
-**Selection du scenario :**
-- Si ticket unique → utilise ce scenario
-- Si User Story → filtre les sub-issues `state: OPEN` avec `issueType.name == "Scenario / critere d'acceptation"`, puis prend le **premier** scenario trouve
+**Scenario selection:**
+- If single ticket → use that scenario
+- If User Story → filter sub-issues with `state: OPEN` and `issueType.name == "Scenario / acceptance criteria"`, then take the **first** scenario found
 
-### Option B : Scenario colle en texte
+### Option B: Pasted text scenario
 
-Si l'utilisateur colle directement le scenario (Gherkin, specs, texte libre), l'utiliser tel quel. Pas besoin de `gh`.
+If the user pastes the scenario directly (Gherkin, specs, free text), use it as-is. No need for `gh`.
 
-## 1.4 Verifier le perimetre
+## 1.4 Check the scope
 
-**Regle critique** : ce skill genere **TOUJOURS** un test e2e backend.
+**Critical rule**: this skill **ALWAYS** generates a backend e2e test.
 
-Si le scenario provient d'un ticket GitHub avec le label `ui-test`, ou si le scenario colle decrit clairement un test UI (interactions navigateur, clics, formulaires...), **REFUSE** :
-> "Ce skill est reserve au backend. Les tests UI ne sont pas supportes par le skill onboarding. Choisis un scenario backend."
+If the scenario comes from a GitHub ticket with the `ui-test` label, or if the pasted scenario clearly describes a UI test (browser interactions, clicks, forms...), **REFUSE**:
+> "This skill is backend-only. UI tests are not supported by the onboarding skill. Choose a backend scenario."
 
-## 1.5 Extraire le contexte
+## 1.5 Extract the context
 
-Extrais du body du ticket (et de la US parente si applicable) :
-- **Scenario Gherkin** (Given/When/Then)
-- **Regles metier** : validations, formats, contraintes
-- **API** : endpoints, methodes HTTP, codes de retour, formats requete/reponse
-- **Noms de domaine** : entites, proprietes, tables, colonnes
-- **Contraintes techniques** : types, structures, relations
+Extract from the ticket body (and parent US if applicable):
+- **Gherkin scenario** (Given/When/Then)
+- **Business rules**: validations, formats, constraints
+- **API**: endpoints, HTTP methods, return codes, request/response formats
+- **Domain names**: entities, properties, tables, columns
+- **Technical constraints**: types, structures, relationships
 
-## 1.6 Confirmer avec l'utilisateur
+## 1.6 Confirm with the user
 
-Affiche le scenario extrait et le contexte. Demande confirmation avant de generer le test :
-> "Voici le scenario que je vais utiliser : ..."
-> "C'est bien ce scenario ? (oui/non)"
+Display the extracted scenario and context. Ask for confirmation before generating the test:
+> "Here is the scenario I will use: ..."
+> "Is this the right scenario? (yes/no)"
 
-**STOP** — attendre confirmation.
+**STOP** — wait for confirmation.

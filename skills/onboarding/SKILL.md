@@ -1,34 +1,34 @@
 ---
 name: onboarding
-description: "Guide interactif d'onboarding pour nouveaux developpeurs backend. Propositions de refactoring selectionnables, fichiers de reference embarques et remplacables. Triggers: 'onboarding', 'onboard moi', 'guide moi', 'je suis nouveau', '/onboarding', 'nouveau developpeur', 'tutoriel backend'."
+description: "Interactive onboarding guide for new backend developers. Selectable refactoring proposals, bundled and replaceable reference files. Triggers: 'onboarding', 'onboard me', 'guide me', 'I'm new', '/onboarding', 'new developer', 'backend tutorial'."
 ---
 
-# Onboarding Backend — Guide interactif configurable
+# Backend Onboarding — Configurable interactive guide
 
-Ce skill guide un nouveau developpeur a travers l'implementation d'une feature backend, de bout en bout. Il est **configurable** : propositions de refactoring et fichiers de reference sont parametrables via `config.json`.
+This skill guides a new developer through implementing a backend feature, end to end. It is **configurable**: refactoring proposals and reference files are parameterizable via `config.json`.
 
-**Ce skill est backend-only.** Il ne gere pas les tests UI.
+**This skill is backend-only.** It does not handle UI tests.
 
 ---
 
-## Bootstrap — Lecture de la configuration
+## Bootstrap — Reading the configuration
 
-**Etape 1** : Lis le fichier de configuration :
-- Chemin : `${CLAUDE_SKILL_DIR}/../../config.json`
+**Step 1**: Read the configuration file:
+- Path: `${CLAUDE_SKILL_DIR}/../../config.json`
 
-Parse le JSON. Ce fichier determine :
-- `proposals` : quelles propositions de refactoring inclure en phase 6 (true/false)
-- `references` : ou trouver les fichiers de reference (null = embarque, chemin string = fichier du projet)
+Parse the JSON. This file determines:
+- `proposals`: which refactoring proposals to include in phase 6 (true/false)
+- `references`: where to find reference files (null = bundled, string path = project file)
 
-**Etape 2** : Resolution des references.
+**Step 2**: Reference resolution.
 
-Pour chaque entree dans `references.skills` :
-- Si la valeur est `null` → le fichier embarque est dans `${CLAUDE_SKILL_DIR}/../../references/skills/{cle}.md`
-- Si la valeur est un chemin string → lire ce fichier depuis le projet
+For each entry in `references.skills`:
+- If the value is `null` → the bundled file is at `${CLAUDE_SKILL_DIR}/../../references/skills/{key}.md`
+- If the value is a string path → read that file from the project
 
-Pour chaque entree dans `references.examples` :
-- Si la valeur est `null` → le fichier embarque est dans `${CLAUDE_SKILL_DIR}/../../references/examples/{cle}.ts`
-  - Mapping des cles vers les noms de fichiers embarques :
+For each entry in `references.examples`:
+- If the value is `null` → the bundled file is at `${CLAUDE_SKILL_DIR}/../../references/examples/{key}.ts`
+  - Key to bundled filename mapping:
     - `testApp` → `testApp.ts`
     - `commandResult` → `commandResult.ts`
     - `dsl` → `createUserAccount.dsl.ts`
@@ -40,32 +40,32 @@ Pour chaque entree dans `references.examples` :
     - `valueObject` → `userAcountEmail.vo.ts`
     - `inMemoryRepository` → `createUserAccount.inMemoryRepository.ts`
     - `useCaseDriver` → `createUserAccount.useCaseDriver.ts`
-- Si la valeur est un chemin string → lire ce fichier depuis le projet
+- If the value is a string path → read that file from the project
 
 ---
 
-## Execution des phases
+## Phase execution
 
-Les 6 phases s'executent **toujours dans l'ordre**, sans exception. Lire chaque fichier de phase et suivre ses instructions.
+The 6 phases are executed **always in order**, without exception. Read each phase file and follow its instructions.
 
-| Phase | Fichier |
-|-------|---------|
-| 1. Recuperation du scenario | `${CLAUDE_SKILL_DIR}/../../phases/01-scenario-retrieval.md` |
-| 2. Generation du test e2e | `${CLAUDE_SKILL_DIR}/../../phases/02-test-generation.md` |
-| 3. Explication pedagogique | `${CLAUDE_SKILL_DIR}/../../phases/03-pedagogical-explanation.md` |
-| 4. Developpement libre | `${CLAUDE_SKILL_DIR}/../../phases/04-free-development.md` |
+| Phase | File |
+|-------|------|
+| 1. Scenario retrieval | `${CLAUDE_SKILL_DIR}/../../phases/01-scenario-retrieval.md` |
+| 2. E2E test generation | `${CLAUDE_SKILL_DIR}/../../phases/02-test-generation.md` |
+| 3. Pedagogical explanation | `${CLAUDE_SKILL_DIR}/../../phases/03-pedagogical-explanation.md` |
+| 4. Free development | `${CLAUDE_SKILL_DIR}/../../phases/04-free-development.md` |
 | 5. Validation | `${CLAUDE_SKILL_DIR}/../../phases/05-validation.md` |
-| 6. Refactoring | Voir ci-dessous |
+| 6. Refactoring | See below |
 
-### Phase 6 : Refactoring
+### Phase 6: Refactoring
 
-1. Lire `${CLAUDE_SKILL_DIR}/../../phases/06-refactoring/preambule.md` et suivre ses instructions
-2. Pour chaque cle dans `config.proposals` ou la valeur est `true`, lire le fichier de proposition correspondant.
+1. Read `${CLAUDE_SKILL_DIR}/../../phases/06-refactoring/preambule.md` and follow its instructions
+2. For each key in `config.proposals` where the value is `true`, read the corresponding proposal file.
 
-<!-- Table generee par /audit — modifier via le skill audit, pas manuellement -->
+<!-- Table generated by /audit — modify via the audit skill, not manually -->
 
-| Cle config | Fichier |
-|------------|---------|
+| Config key | File |
+|------------|------|
 | `vertical-slices` | `phases/06-refactoring/proposals/01-vertical-slices.md` |
 | `controller-purity` | `phases/06-refactoring/proposals/02-controller-purity.md` |
 | `encapsulation` | `phases/06-refactoring/proposals/03-encapsulation.md` |
@@ -75,23 +75,23 @@ Les 6 phases s'executent **toujours dans l'ordre**, sans exception. Lire chaque 
 | `unit-tests` | `phases/06-refactoring/proposals/07-unit-tests.md` |
 | `sql-reads` | `phases/06-refactoring/proposals/08-sql-reads.md` |
 
-<!-- Fin table generee par /audit -->
+<!-- End table generated by /audit -->
 
-3. Lire `${CLAUDE_SKILL_DIR}/../../phases/06-refactoring/closure.md` et suivre ses instructions
+3. Read `${CLAUDE_SKILL_DIR}/../../phases/06-refactoring/closure.md` and follow its instructions
 
-Tous les chemins de fichiers de phase sont relatifs a `${CLAUDE_SKILL_DIR}/../../`.
+All phase file paths are relative to `${CLAUDE_SKILL_DIR}/../../`.
 
 ---
 
-## Regles strictes
+## Strict rules
 
-1. **Backend-only** — refuser les tickets avec label `ui-test`
-2. **Toujours e2e** — quel que soit le label (`backend-usecase-test` ou `backend-e2e-test`), generer un test e2e
-3. **Utiliser `TestApp`** — jamais `PostgreSqlContainer` directement
-4. **Tout en francais** — explications, messages, commentaires (sauf si `config.language` est `"en"`)
-5. **NE JAMAIS ecrire le code de la feature** a la place du developpeur (Phases 4/5) — c'est educatif
-6. **NE JAMAIS sauter les explications** de la Phase 3 — chaque point doit etre confirme individuellement
-7. **NE JAMAIS passer en Phase 6** si les tests ne passent pas en Phase 5
-8. **Toutes les propositions de refacto sont optionnelles** — respecter "skip" et "je ne veux pas refactorer"
-9. **Referencer le code existant** — lire et montrer des extraits des fichiers de reference (embarques ou projet), pas de code theorique
-10. **Guider, pas faire** — en Phase 6, expliquer et montrer des exemples, laisser le dev coder
+1. **Backend-only** — refuse tickets with `ui-test` label
+2. **Always e2e** — regardless of the label (`backend-usecase-test` or `backend-e2e-test`), generate an e2e test
+3. **Use `TestApp`** — never `PostgreSqlContainer` directly
+4. **Everything in English** — explanations, messages, comments (unless `config.language` is `"fr"`)
+5. **NEVER write feature code** for the developer (Phases 4/5) — this is educational
+6. **NEVER skip the explanations** in Phase 3 — each point must be individually confirmed
+7. **NEVER proceed to Phase 6** if tests don't pass in Phase 5
+8. **All refactoring proposals are optional** — respect "skip" and "I don't want to refactor"
+9. **Reference existing code** — read and show excerpts from reference files (bundled or project), not theoretical code
+10. **Guide, don't do** — in Phase 6, explain and show examples, let the dev code

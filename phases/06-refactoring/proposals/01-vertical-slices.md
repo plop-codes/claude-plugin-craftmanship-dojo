@@ -1,22 +1,22 @@
-# Proposition 1 : Vertical Slices
+# Proposal 1: Vertical Slices
 
-## References necessaires
+## Required references
 
-- Skill : `vertical-slice`
+- Skill: `vertical-slice`
 
 ## Instructions
 
-**Inspecter** : est-ce que tout le code de la feature est dans le bon dossier `src/{domain}/{boundedContext}/{feature}/` ?
+**Inspect**: is all the feature code in the correct folder `src/{domain}/{boundedContext}/{feature}/`?
 
-**Ce qui peut etre partage** (et donc vivre en dehors du vertical slice) :
-- Les entites de domaine (`shared/` dans le bounded context)
-- Les Value Objects
-- Les modules NestJS partages
+**What can be shared** (and therefore live outside the vertical slice):
+- Domain entities (`shared/` within the bounded context)
+- Value Objects
+- Shared NestJS modules
 
-**Tout le reste** (controller, use case, repository interface, repository implementation) doit etre dans le vertical slice.
+**Everything else** (controller, use case, repository interface, repository implementation) must be in the vertical slice.
 
-**Pourquoi** : la co-location permet de comprendre une feature en regardant un seul dossier. Pas besoin de naviguer entre `controllers/`, `services/`, `repositories/` — tout est au meme endroit.
+**Why**: co-location allows understanding a feature by looking at a single folder. No need to navigate between `controllers/`, `services/`, `repositories/` — everything is in one place.
 
-**Exemple** : montre la structure du dossier de la feature du developpeur. Lis le skill de reference `vertical-slice` pour les principes.
+**Example**: show the developer's feature folder structure. Read the `vertical-slice` reference skill for the principles.
 
-**STOP** — attendre decision
+**STOP** — wait for decision

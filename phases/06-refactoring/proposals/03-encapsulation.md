@@ -1,18 +1,18 @@
-# Proposition 3 : Encapsulation / Oriente objet
+# Proposal 3: Encapsulation / Object-oriented
 
-## References necessaires
+## Required references
 
-- `entity` : exemple d'entite avec methodes metier
-- Skill : `ddd-patterns`
+- `entity`: example entity with business methods
+- Skill: `ddd-patterns`
 
 ## Instructions
 
-**Inspecter** : est-ce que le use case modifie directement les proprietes d'une entite, ou est-ce qu'il passe par des methodes metier de l'entite ?
+**Inspect**: does the use case directly modify an entity's properties, or does it go through the entity's business methods?
 
-**Skip si** : l'entite expose des methodes metier et le use case les utilise.
+**Skip if**: the entity exposes business methods and the use case uses them.
 
-**Pourquoi** : l'aggregate root est le **gardien des invariants metier**. Si le use case modifie directement `entity.name = 'foo'`, n'importe quel code peut casser les regles. En passant par `entity.rename('foo')`, l'entite peut valider, verifier les contraintes, et garantir la coherence.
+**Why**: the aggregate root is the **guardian of business invariants**. If the use case directly modifies `entity.name = 'foo'`, any code can break the rules. By going through `entity.rename('foo')`, the entity can validate, check constraints, and guarantee consistency.
 
-**Exemple** : lis et montre le fichier de reference `entity` — noter les methodes metier qui encapsulent les mutations. Lire aussi le skill de reference `ddd-patterns` pour les principes d'aggregate root.
+**Example**: read and show the `entity` reference file — note the business methods that encapsulate mutations. Also read the `ddd-patterns` reference skill for aggregate root principles.
 
-**STOP** — attendre decision
+**STOP** — wait for decision

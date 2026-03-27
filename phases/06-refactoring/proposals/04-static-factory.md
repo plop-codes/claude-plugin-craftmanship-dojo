@@ -1,20 +1,20 @@
-# Proposition 4 : Static Factory (`Entity.create()`)
+# Proposal 4: Static Factory (`Entity.create()`)
 
-## References necessaires
+## Required references
 
-- `entity` : exemple d'entite avec factory statique
+- `entity`: example entity with static factory
 
 ## Instructions
 
-**Inspecter** : est-ce que l'entite a un constructeur public, ou utilise-t-elle `private constructor` + `static create()` ?
+**Inspect**: does the entity have a public constructor, or does it use `private constructor` + `static create()`?
 
-**Skip si** : l'entite utilise deja le pattern factory.
+**Skip if**: the entity already uses the factory pattern.
 
-**Pourquoi** :
-- **Langage metier** : `Order.create(...)` est plus expressif que `new Order(...)`. Le nom de la methode peut refleter l'intention metier.
-- **Validation a la creation** : la factory peut valider les donnees et retourner un `CommandResult` avec une erreur typee au lieu de lancer une exception.
-- **Immutabilite** : le constructeur prive empeche la creation d'entites dans un etat invalide.
+**Why**:
+- **Business language**: `Order.create(...)` is more expressive than `new Order(...)`. The method name can reflect the business intent.
+- **Validation at creation**: the factory can validate data and return a `CommandResult` with a typed error instead of throwing an exception.
+- **Immutability**: the private constructor prevents creating entities in an invalid state.
 
-**Exemple** : lis et montre le fichier de reference `entity` — noter `static create()` qui valide chaque Value Object et retourne `CommandResult`. Montrer aussi comment `static reconstitute()` permet de recreer depuis la base (sans validation).
+**Example**: read and show the `entity` reference file — note `static create()` which validates each Value Object and returns `CommandResult`. Also show how `static reconstitute()` allows recreating from the database (without validation).
 
-**STOP** — attendre decision
+**STOP** — wait for decision

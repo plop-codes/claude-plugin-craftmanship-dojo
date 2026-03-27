@@ -1,21 +1,21 @@
-# Proposition 8 : Pas d'ORM pour les lectures
+# Proposal 8: No ORM for reads
 
-## References necessaires
+## Required references
 
-Aucune reference embarquee specifique. Inspecter le code du developpeur.
+No specific bundled reference. Inspect the developer's code.
 
 ## Instructions
 
-**Inspecter** : si la feature contient une query/lecture, est-ce qu'elle utilise `Repository<Entity>.find()` / `Repository<Entity>.findOne()` (TypeORM) ou du SQL direct via `DataSource.query()` ?
+**Inspect**: if the feature contains a query/read, does it use `Repository<Entity>.find()` / `Repository<Entity>.findOne()` (TypeORM) or direct SQL via `DataSource.query()`?
 
-**Skip si** : la feature est write-only (creation, modification, suppression) ou utilise deja du SQL direct.
+**Skip if**: the feature is write-only (create, update, delete) or already uses direct SQL.
 
-**Pourquoi** :
-- Pour les **lectures**, on n'a pas besoin de mapper vers des entites de domaine — on veut des **view models** (projections simples).
-- Le SQL direct est plus **simple** (pas de configuration de relations, pas de `@OneToMany`, pas de lazy loading surprises) et plus **performant** (requete optimisee, pas de N+1).
-- Le repository TypeORM reste pertinent pour les **ecritures** (il gere les transactions, le cascade, le tracking des changements).
+**Why**:
+- For **reads**, you don't need to map to domain entities — you want **view models** (simple projections).
+- Direct SQL is **simpler** (no relationship configuration, no `@OneToMany`, no lazy loading surprises) and more **performant** (optimized query, no N+1).
+- The TypeORM repository remains relevant for **writes** (it handles transactions, cascade, change tracking).
 
-**Exemple** : montrer le pattern :
+**Example**: show the pattern:
 ```typescript
 @Injectable()
 export class FeatureSqlRepository implements FeatureRepository {
@@ -24,9 +24,9 @@ export class FeatureSqlRepository implements FeatureRepository {
   async findById(id: string): Promise<ViewModel | null> {
     const rows = await this.dataSource.query('SELECT ... FROM ... WHERE id = $1', [id]);
     if (rows.length === 0) return null;
-    return { /* mapping simple */ };
+    return { /* simple mapping */ };
   }
 }
 ```
 
-**STOP** — attendre decision
+**STOP** — wait for decision

@@ -1,10 +1,10 @@
-# Phase 6 : Cloture
+# Phase 6: Closure
 
-Quand toutes les propositions ont ete traitees (acceptees, skippees, ou stop global) :
+When all proposals have been handled (accepted, skipped, or globally stopped):
 
-> "Bravo ! Tu as complete l'onboarding. Tu sais maintenant :"
-> - "Ecrire un test e2e avec le pattern DSL/Driver/Spec"
-> - "Utiliser TestApp et testcontainers"
-> - "Les principes d'architecture du projet (vertical slices, clean architecture, DDD)"
+> "Congratulations! You've completed the onboarding. You now know how to:"
+> - "Write an e2e test with the DSL/Driver/Spec pattern"
+> - "Use TestApp and testcontainers"
+> - "The project's architecture principles (vertical slices, clean architecture, DDD)"
 >
-> "Pour aller plus loin, tu peux utiliser le skill `/atdd` pour implementer tes prochaines features en TDD complet (RED → GREEN → REFACTOR)."
+> "To go further, you can use the `/atdd` skill to implement your next features with full TDD (RED → GREEN → REFACTOR)."

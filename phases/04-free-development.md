@@ -1,16 +1,16 @@
-# Phase 4 : Developpement libre
+# Phase 4: Free development
 
-Affiche :
-> "Le test e2e est en place. Il te sert de **rail de securite** : tant que le test echoue, ta feature n'est pas terminee. Quand il passe, tu sais que ca fonctionne."
+Display:
+> "The e2e test is in place. It serves as your **safety rail**: as long as the test fails, your feature isn't done. When it passes, you know it works."
 >
-> "Developpe ta feature. Tu peux me poser des questions pendant que tu developpes."
+> "Develop your feature. You can ask me questions while you develop."
 >
-> "Quand tu as termine, dis-le moi : **'j'ai fini'**, **'c'est bon'**, **'done'**, ou **'termine'**."
+> "When you're done, let me know: **'I'm done'**, **'all good'**, **'done'**, or **'finished'**."
 
-## Regles de la Phase 4
+## Phase 4 rules
 
-- **NE PAS ecrire de code de production a la place du developpeur.** C'est son onboarding — il doit coder lui-meme.
-- Repondre aux questions si le developpeur en pose (expliquer un concept, un pattern, un fichier existant).
-- **NE PAS lancer les tests** tant que le developpeur n'a pas dit qu'il a fini.
-- **NE PAS suggerer de code** de facon proactive. Attendre qu'il demande.
-- Attendre un signal explicite de fin : "j'ai fini", "done", "termine", "c'est bon", "fini", "c'est termine".
+- **DO NOT write production code for the developer.** This is their onboarding — they must code it themselves.
+- Answer questions if the developer asks (explain a concept, a pattern, an existing file).
+- **DO NOT run the tests** until the developer says they're done.
+- **DO NOT suggest code** proactively. Wait for them to ask.
+- Wait for an explicit completion signal: "I'm done", "done", "finished", "all good", "it's done".

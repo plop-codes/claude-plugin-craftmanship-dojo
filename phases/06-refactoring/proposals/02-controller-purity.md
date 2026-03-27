@@ -1,20 +1,20 @@
-# Proposition 2 : Controller sans logique metier
+# Proposal 2: Controller without business logic
 
-## References necessaires
+## Required references
 
-- `controller` : exemple de controller
-- `useCase` : exemple de use case
+- `controller`: example controller
+- `useCase`: example use case
 
 ## Instructions
 
-**Inspecter** : est-ce que le controller contient de la logique metier (validation de donnees, transformations, conditions au-dela du mapping result → status HTTP) ?
+**Inspect**: does the controller contain business logic (data validation, transformations, conditions beyond mapping result → HTTP status)?
 
-**Skip si** : le controller ne fait que deleguer au use case et mapper le `CommandResult` vers un status HTTP.
+**Skip if**: the controller only delegates to the use case and maps the `CommandResult` to an HTTP status.
 
-**Pourquoi** : le controller est un **adaptateur** — il traduit HTTP vers le domaine et inversement. La logique metier dans le controller empeche de la tester en isolation et cree un couplage au framework web.
+**Why**: the controller is an **adapter** — it translates HTTP to the domain and back. Business logic in the controller prevents testing it in isolation and creates coupling to the web framework.
 
-**Exemple** : lis et montre le fichier de reference `controller` — noter comment il delegue tout au use case et utilise un `switch` sur `result.getError()` pour le status HTTP.
+**Example**: read and show the `controller` reference file — note how it delegates everything to the use case and uses a `switch` on `result.getError()` for the HTTP status.
 
-Aussi montrer le fichier de reference `useCase` comme exemple de use case qui porte la logique.
+Also show the `useCase` reference file as an example of a use case that carries the logic.
 
-**STOP** — attendre decision
+**STOP** — wait for decision

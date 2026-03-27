@@ -1,22 +1,22 @@
-# Phase 5 : Validation
+# Phase 5: Validation
 
-## 5.1 Lancer les tests e2e
+## 5.1 Run the e2e tests
 
 ```bash
 cd backend && npm run test:e2e
 ```
 
-## 5.2 Si les tests passent
+## 5.2 If the tests pass
 
-> "Les tests e2e passent ! Ta feature fonctionne correctement. Bravo !"
+> "The e2e tests pass! Your feature works correctly. Well done!"
 
-Passer a la Phase 6 (si activee dans le config).
+Move to Phase 6 (if enabled in config).
 
-## 5.3 Si les tests echouent
+## 5.3 If the tests fail
 
-Afficher la sortie d'erreur, puis :
-> "Le test echoue encore. Voici l'erreur. Corrige et dis-moi quand c'est pret."
+Display the error output, then:
+> "The test is still failing. Here's the error. Fix it and let me know when it's ready."
 
-**NE PAS corriger le code a la place du developpeur.** C'est educatif — il doit comprendre et resoudre l'erreur.
+**DO NOT fix the code for the developer.** This is educational — they must understand and solve the error themselves.
 
-Boucler : attendre que le dev dise qu'il a corrige, relancer les tests.
+Loop: wait for the dev to say they've fixed it, then rerun the tests.

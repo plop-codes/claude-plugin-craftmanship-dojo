@@ -1,66 +1,66 @@
 # Architecture — Ports & Adapters / Clean Architecture
 
-Organisation du code, conventions de nommage, et flux de donnees.
+Code organization, naming conventions, and data flow.
 
 ---
 
-## Regle fondamentale
+## Fundamental rule
 
-**Le domaine ne connait jamais l'infrastructure.** L'API externe (Figma, GitHub, base de donnees, etc.) est un adaptateur qui implemente un port. Le domaine n'importe jamais d'adapter.
+**The domain never knows about infrastructure.** The external API (Figma, GitHub, database, etc.) is an adapter that implements a port. The domain never imports an adapter.
 
-### Flux de dependances
+### Dependency flow
 
 ```
-entryPoint → UseCase → Aggregate/Entite/VO (domaine pur)
+entryPoint → UseCase → Aggregate/Entity/VO (pure domain)
                 ↓
               Port (interface)
                 ↑
-            Adapter (prod: API externe, test: InMemory)
+            Adapter (prod: external API, test: InMemory)
 ```
 
 ---
 
-## Structure des modules
+## Module structure
 
 ```
 src/
-├── entryPoint.ts                          # Entry point — orchestre les use cases
+├── entryPoint.ts                          # Entry point — orchestrates use cases
 ├── modules/
 │   ├── {boundedContext}/                   # Bounded context
-│   │   ├── {entity}.ts                    # Entite
+│   │   ├── {entity}.ts                    # Entity
 │   │   ├── {valueObject}.ts               # Value Object
 │   │   ├── {aggregate}.ts                 # Aggregate root
 │   │   └── {feature}/                     # Use case (vertical slice)
 │   │       ├── {feature}.useCase.ts
 │   │       ├── {feature}.{portName}.ts    # Port (interface)
-│   │       ├── {feature}.figma{PortName}.ts  # Adapter prod
-│   │       └── test/                      # Tests co-localises
+│   │       ├── {feature}.figma{PortName}.ts  # Prod adapter
+│   │       └── test/                      # Co-located tests
 │   └── shared/
 │       └── result/
-│           └── commandResult.ts           # Type partage entre modules
+│           └── commandResult.ts           # Type shared across modules
 ```
 
 ---
 
-## Conventions de nommage des fichiers
+## File naming conventions
 
-| Type | Pattern | Exemple |
+| Type | Pattern | Example |
 |------|---------|---------|
-| Entite | `{entity}.ts` | `element.ts`, `issuableElement.ts` |
+| Entity | `{entity}.ts` | `element.ts`, `issuableElement.ts` |
 | Value Object | `{valueObject}.ts` | `release.ts` |
 | Aggregate root | `{aggregate}.ts` | `impactMapping.ts` |
 | Use case | `{feature}.useCase.ts` | `analyzeImpactMap.useCase.ts` |
 | Port (interface) | `{feature}.{portName}.ts` | `analyzeImpactMap.boardReader.ts` |
-| Adapter prod | `{feature}.{techno}{PortName}.ts` | `analyzeImpactMap.figmaBoardReader.ts` |
-| Adapter test | `{feature}.inMemory{PortName}.ts` | `analyzeImpactMap.inMemoryBoardReader.ts` |
-| DSL test | `{feature}.dsl.ts` | `analyzeImpactMap.dsl.ts` |
-| Raw types (DTOs) | dans le fichier du port | types dans `analyzeImpactMap.boardReader.ts` |
+| Prod adapter | `{feature}.{techno}{PortName}.ts` | `analyzeImpactMap.figmaBoardReader.ts` |
+| Test adapter | `{feature}.inMemory{PortName}.ts` | `analyzeImpactMap.inMemoryBoardReader.ts` |
+| Test DSL | `{feature}.dsl.ts` | `analyzeImpactMap.dsl.ts` |
+| Raw types (DTOs) | in the port file | types in `analyzeImpactMap.boardReader.ts` |
 
 ---
 
 ## Ports
 
-Interface unique par use case. Definit les types bruts (DTOs) dans le meme fichier.
+Single interface per use case. Defines raw types (DTOs) in the same file.
 
 ```typescript
 // analyzeImpactMap.boardReader.ts
@@ -72,17 +72,17 @@ export interface AnalyzeImpactMapBoardReader {
 }
 ```
 
-### Regles ports
+### Port rules
 
-- Les types du port sont des DTOs simples (pas d'objets domaine)
-- Un port par use case (pas de port partage entre use cases)
-- Le port est dans le dossier du use case, pas dans le domaine
+- Port types are simple DTOs (not domain objects)
+- One port per use case (no port shared between use cases)
+- The port is in the use case folder, not in the domain
 
 ---
 
 ## Use Case
 
-Orchestrateur fin. Injection de dependances par constructeur. Retourne `CommandResult<string>`.
+Thin orchestrator. Dependency injection via constructor. Returns `CommandResult<string>`.
 
 ```typescript
 export class AnalyzeImpactMapUseCase {
@@ -97,22 +97,22 @@ export class AnalyzeImpactMapUseCase {
 }
 ```
 
-### Regles use case
+### Use case rules
 
-- **Pas de logique metier** dans le use case — deleguer aux aggregates/entites
-- **Pas de `try/catch`** sauf si le port peut throw (adapter externe)
-- Injection par constructeur, pas de framework DI
-- Une seule methode `execute()`
+- **No business logic** in the use case — delegate to aggregates/entities
+- **No `try/catch`** unless the port can throw (external adapter)
+- Injection via constructor, no DI framework
+- Single `execute()` method
 
 ---
 
 ## CommandResult
 
-Type partage pour les resultats qui peuvent echouer.
+Shared type for results that can fail.
 
 ```typescript
-CommandResult.success(value?)    // succes avec valeur optionnelle
-CommandResult.failure(error)     // echec avec message d'erreur
+CommandResult.success(value?)    // success with optional value
+CommandResult.failure(error)     // failure with error message
 result.isSuccess() / isFailure()
 result.getValue<T>()
 result.getError()
@@ -120,9 +120,9 @@ result.getError()
 
 ---
 
-## Communication entre bounded contexts
+## Communication between bounded contexts
 
-Les bounded contexts communiquent via JSON (contrat). Pas de dependance directe entre domaines.
+Bounded contexts communicate via JSON (contract). No direct dependency between domains.
 
 ```
 contextA.toJson() → JSON → contextB.execute(json)
@@ -130,9 +130,9 @@ contextA.toJson() → JSON → contextB.execute(json)
 
 ---
 
-## Regles transverses
+## Cross-cutting rules
 
-- **Pas de barrel files** (`index.ts`) — imports directs vers le fichier source
-- **Pas de `any`** — TypeScript strict
-- **Pas de classes abstraites** — composition via interfaces (ports)
-- **JAMAIS de ports dans le domain model** : les entites et VOs ne doivent **jamais** importer ni recevoir d'interfaces de port (repository, hasher, provider, etc.). Le model recoit uniquement des **valeurs finales** (strings, numbers, dates, autres VOs). C'est le **use case** qui appelle les ports et passe les resultats au model.
+- **No barrel files** (`index.ts`) — direct imports to the source file
+- **No `any`** — strict TypeScript
+- **No abstract classes** — composition via interfaces (ports)
+- **NEVER ports in the domain model**: entities and VOs must **never** import or receive port interfaces (repository, hasher, provider, etc.). The model only receives **final values** (strings, numbers, dates, other VOs). The **use case** calls the ports and passes the results to the model.

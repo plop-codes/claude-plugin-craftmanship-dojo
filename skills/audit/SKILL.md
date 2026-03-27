@@ -1,37 +1,37 @@
 ---
 name: audit
-description: "Analyse les pratiques d'une codebase backend pour generer des etapes de refactoring qui les enseignent aux nouveaux developpeurs via l'onboarding. Outil pour tech leads. Triggers: 'audit', 'audit archi', 'analyse mon code', 'diagnostic architecture', 'roadmap refactoring', '/audit'."
+description: "Analyzes a backend codebase's practices to generate refactoring steps that teach them to new developers via onboarding. Tool for tech leads. Triggers: 'audit', 'architecture audit', 'analyze my code', 'architecture diagnosis', 'refactoring roadmap', '/audit'."
 ---
 
-# Audit — Adapter l'onboarding aux pratiques de votre codebase
+# Audit — Adapt onboarding to your codebase practices
 
-Ce skill analyse les pratiques et conventions deja en place dans une codebase backend, puis genere des etapes de refactoring qui les enseignent progressivement a un developpeur qui ne les maitrise pas encore. Ces etapes alimentent la Phase 6 du skill `/onboarding`.
+This skill analyzes the practices and conventions already in place in a backend codebase, then generates refactoring steps that progressively teach them to a developer who doesn't master them yet. These steps feed Phase 6 of the `/onboarding` skill.
 
-**Ce skill s'adresse au tech lead**, pas au developpeur en onboarding.
+**This skill is for the tech lead**, not the developer being onboarded.
 
-**Ce skill est agnostique** : il fonctionne sur n'importe quel langage et framework backend.
+**This skill is agnostic**: it works on any backend language and framework.
 
 ---
 
-## Bootstrap — Lecture de la configuration
+## Bootstrap — Reading the configuration
 
-**Etape 1** : Lis le fichier de configuration :
-- Chemin : `${CLAUDE_SKILL_DIR}/../../config.json`
+**Step 1**: Read the configuration file:
+- Path: `${CLAUDE_SKILL_DIR}/../../config.json`
 
-Parse le JSON. Ce fichier determine :
-- `language` : langue des messages (`"fr"` par defaut)
-- `audit.scan-paths` : dossiers a scanner (defaut : `["src/"]`)
-- `references` : ou trouver les fichiers de reference (null = embarque, chemin string = fichier du projet)
+Parse the JSON. This file determines:
+- `language`: message language (`"fr"` by default)
+- `audit.scan-paths`: directories to scan (default: `["src/"]`)
+- `references`: where to find reference files (null = bundled, string path = project file)
 
-**Etape 2** : Resolution des references (meme logique que le skill onboarding).
+**Step 2**: Reference resolution (same logic as the onboarding skill).
 
-Pour chaque entree dans `references.skills` :
-- Si la valeur est `null` → le fichier embarque est dans `${CLAUDE_SKILL_DIR}/../../references/skills/{cle}.md`
-- Si la valeur est un chemin string → lire ce fichier depuis le projet
+For each entry in `references.skills`:
+- If the value is `null` → the bundled file is at `${CLAUDE_SKILL_DIR}/../../references/skills/{key}.md`
+- If the value is a string path → read that file from the project
 
-Pour chaque entree dans `references.examples` :
-- Si la valeur est `null` → le fichier embarque est dans `${CLAUDE_SKILL_DIR}/../../references/examples/{cle}.ts`
-  - Mapping des cles vers les noms de fichiers embarques :
+For each entry in `references.examples`:
+- If the value is `null` → the bundled file is at `${CLAUDE_SKILL_DIR}/../../references/examples/{key}.ts`
+  - Key to bundled filename mapping:
     - `testApp` → `testApp.ts`
     - `commandResult` → `commandResult.ts`
     - `dsl` → `createUserAccount.dsl.ts`
@@ -43,30 +43,30 @@ Pour chaque entree dans `references.examples` :
     - `valueObject` → `userAcountEmail.vo.ts`
     - `inMemoryRepository` → `createUserAccount.inMemoryRepository.ts`
     - `useCaseDriver` → `createUserAccount.useCaseDriver.ts`
-- Si la valeur est un chemin string → lire ce fichier depuis le projet
+- If the value is a string path → read that file from the project
 
 ---
 
-## Execution des phases
+## Phase execution
 
-Les phases s'executent **dans l'ordre**, sans exception. Lire chaque fichier de phase et suivre ses instructions.
+Phases are executed **in order**, without exception. Read each phase file and follow its instructions.
 
-| Phase | Fichier | Description |
-|-------|---------|-------------|
-| 1. Analyse | `${CLAUDE_SKILL_DIR}/../../phases/audit/00-analysis-guide.md` | Identifier les pratiques existantes et proposer des etapes de refactoring pour les enseigner |
-| 2. Generation | `${CLAUDE_SKILL_DIR}/../../phases/audit/01-generation.md` | Generer les fichiers de propositions et mettre a jour la config |
+| Phase | File | Description |
+|-------|------|-------------|
+| 1. Analysis | `${CLAUDE_SKILL_DIR}/../../phases/audit/00-analysis-guide.md` | Identify existing practices and propose refactoring steps to teach them |
+| 2. Generation | `${CLAUDE_SKILL_DIR}/../../phases/audit/01-generation.md` | Generate proposal files and update config |
 
-Tous les chemins de fichiers de phase sont relatifs a `${CLAUDE_SKILL_DIR}/../../`.
+All phase file paths are relative to `${CLAUDE_SKILL_DIR}/../../`.
 
 ---
 
-## Regles strictes
+## Strict rules
 
-1. **Ne JAMAIS generer de propositions sans validation du tech lead** — toujours presenter les etapes proposees et attendre la validation avant de generer les fichiers
-2. **Ne JAMAIS proposer une pratique absente de la codebase** — si aucun fichier existant n'illustre la pratique, elle ne doit pas devenir une etape. Seul le tech lead peut ajouter des pratiques aspirationnelles
-3. **Adapter la detection au langage/framework detecte** — ne pas presupposer TypeScript ou NestJS
-4. **Les propositions generees doivent suivre exactement le format existant** — pour etre compatibles avec le skill onboarding
-5. **Tout en francais par defaut** — sauf si `config.language` est `"en"`
-6. **Ordonner pedagogiquement** — des pratiques les plus simples aux plus avancees. Chaque etape doit etre comprehensible independamment
-7. **Referencer le code existant** — chaque etape doit citer des fichiers concrets de la codebase qui illustrent deja la pratique enseignee
-8. **Respecter les decisions du tech lead** — s'il retire, reordonne ou ajoute des etapes, appliquer sans resistance
+1. **NEVER generate proposals without tech lead validation** — always present the proposed steps and wait for validation before generating files
+2. **NEVER propose a practice absent from the codebase** — if no existing file illustrates the practice, it must not become a step. Only the tech lead can add aspirational practices
+3. **Adapt detection to the detected language/framework** — do not assume TypeScript or NestJS
+4. **Generated proposals must follow the existing format exactly** — to be compatible with the onboarding skill
+5. **Everything in English by default** — unless `config.language` is `"fr"`
+6. **Order pedagogically** — from simplest to most advanced practices. Each step must be understandable independently
+7. **Reference existing code** — each step must cite concrete codebase files that already illustrate the practice being taught
+8. **Respect the tech lead's decisions** — if they remove, reorder, or add steps, apply without resistance

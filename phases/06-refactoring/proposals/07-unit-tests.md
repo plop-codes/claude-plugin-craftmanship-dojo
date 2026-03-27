@@ -1,28 +1,28 @@
-# Proposition 7 : Tests unitaires sur le UseCase
+# Proposal 7: Unit tests on the UseCase
 
-## References necessaires
+## Required references
 
-- `inMemoryRepository` : exemple de repository in-memory
-- `useCaseDriver` : exemple de driver de test unitaire
-- Skill : `architecture`
+- `inMemoryRepository`: example in-memory repository
+- `useCaseDriver`: example unit test driver
+- Skill: `architecture`
 
 ## Instructions
 
-**Inspecter** : la feature a-t-elle des tests unitaires sur le use case (dossier `test/usecase/`) ?
+**Inspect**: does the feature have unit tests on the use case (`test/usecase/` folder)?
 
-**Skip si** : des tests unitaires existent deja.
+**Skip if**: unit tests already exist.
 
-**Pourquoi** :
-- Les tests e2e sont **lents** (demarrage des containers Docker, ~5-10 secondes par test). Parfait pour verifier que tout fonctionne de bout en bout, mais pas ideal pour iterer rapidement sur la logique metier.
-- Les tests unitaires avec un **repository in-memory** sont **instantanes** et testent la logique en isolation.
-- Pour ca, il faut une **interface** pour le repository (un **port**). Le use case depend de l'interface, pas de l'implementation TypeORM. En test, on injecte un repository in-memory. En production, on injecte le repository TypeORM.
-- C'est le pattern **Ports & Adapters** : l'interface est le port, les implementations (TypeORM, in-memory) sont les adaptateurs.
+**Why**:
+- E2E tests are **slow** (starting Docker containers, ~5-10 seconds per test). Great for verifying everything works end to end, but not ideal for iterating quickly on business logic.
+- Unit tests with an **in-memory repository** are **instant** and test the logic in isolation.
+- For this, you need an **interface** for the repository (a **port**). The use case depends on the interface, not the TypeORM implementation. In tests, you inject an in-memory repository. In production, you inject the TypeORM repository.
+- This is the **Ports & Adapters** pattern: the interface is the port, the implementations (TypeORM, in-memory) are the adapters.
 
-**Exemple** : lis et montre :
-- Le fichier de reference `inMemoryRepository` — l'adapter de test
-- Le fichier de reference `useCaseDriver` — le driver unitaire qui injecte l'in-memory
-- Le skill de reference `architecture` pour les principes Ports & Adapters
+**Example**: read and show:
+- The `inMemoryRepository` reference file — the test adapter
+- The `useCaseDriver` reference file — the unit driver that injects the in-memory
+- The `architecture` reference skill for Ports & Adapters principles
 
-**Ne pas implementer** les tests unitaires dans ce skill. Juste expliquer le concept et montrer les exemples. Le developpeur pourra utiliser le skill `/atdd` (variante use case) pour ca plus tard.
+**Do not implement** the unit tests in this skill. Just explain the concept and show the examples. The developer can use the `/atdd` skill (use case variant) for this later.
 
-**STOP** — attendre decision
+**STOP** — wait for decision

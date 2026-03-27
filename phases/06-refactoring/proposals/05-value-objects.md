@@ -1,24 +1,24 @@
-# Proposition 5 : Validations dans des Value Objects
+# Proposal 5: Validations in Value Objects
 
-## References necessaires
+## Required references
 
-- `valueObject` : exemple de Value Object avec validation
-- `entity` : exemple d'entite qui agregre des VOs
+- `valueObject`: example Value Object with validation
+- `entity`: example entity that aggregates VOs
 
 ## Instructions
 
-**Inspecter** : est-ce que les validations (format email, longueur min/max, valeurs autorisees) sont inline dans l'entite ou le use case, ou dans des Value Objects dedies ?
+**Inspect**: are validations (email format, min/max length, allowed values) inline in the entity or use case, or in dedicated Value Objects?
 
-**Skip si** : les validations sont deja dans des VOs.
+**Skip if**: validations are already in VOs.
 
-**Pourquoi** :
-- Chaque regle de validation a un **nom** (c'est un concept metier, pas juste un `if`)
-- Chaque VO a son propre **enum d'erreur** — le type d'erreur de l'entite est un type union des erreurs de chaque VO
-- Les VOs sont **testables en isolation** et **reutilisables** entre entites
-- `VO.create()` retourne `CommandResult<VoError>`, `VO.from()` reconstruit sans validation (donnees de confiance, ex: depuis la DB)
+**Why**:
+- Each validation rule has a **name** (it's a business concept, not just an `if`)
+- Each VO has its own **error enum** — the entity's error type is a type union of each VO's errors
+- VOs are **testable in isolation** and **reusable** across entities
+- `VO.create()` returns `CommandResult<VoError>`, `VO.from()` reconstructs without validation (trusted data, e.g., from DB)
 
-**Exemple** : lis et montre le fichier de reference `valueObject` — noter le `private constructor`, `static create()` avec validation, `static from()` sans validation, et l'enum d'erreur de validation.
+**Example**: read and show the `valueObject` reference file — note the `private constructor`, `static create()` with validation, `static from()` without validation, and the validation error enum.
 
-Montrer aussi le fichier de reference `entity` pour voir comment l'entite agregre les VOs et propage les erreurs.
+Also show the `entity` reference file to see how the entity aggregates VOs and propagates errors.
 
-**STOP** — attendre decision
+**STOP** — wait for decision

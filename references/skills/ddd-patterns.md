@@ -1,14 +1,14 @@
 # DDD Domain Modeling Patterns
 
-Patterns et conventions de modelisation domaine. Consulter AVANT de creer ou modifier une entite, un value object, un aggregate ou un use case.
+Domain modeling patterns and conventions. Consult BEFORE creating or modifying an entity, value object, aggregate, or use case.
 
 ---
 
-## Entite
+## Entity
 
-Objet avec identite. `private constructor` (simple assignement) + factory statique `create()`. Proprietes `readonly`. Les validations metier sont portees par des **Value Objects** dedies (voir section VO ci-dessous). L'entite agregre les VOs et son type d'erreur est un **type union** des erreurs de chaque VO.
+Object with identity. `private constructor` (simple assignment) + `create()` static factory. `readonly` properties. Business validations are carried by dedicated **Value Objects** (see VO section below). The entity aggregates VOs and its error type is a **type union** of each VO's errors.
 
-**JAMAIS de ports dans le model** : les entites et VOs ne recoivent que des **valeurs finales** (strings, numbers, dates, autres VOs), jamais d'interfaces de port. C'est le **use case** qui appelle les ports et passe les resultats au model.
+**NEVER ports in the model**: entities and VOs only receive **final values** (strings, numbers, dates, other VOs), never port interfaces. The **use case** calls the ports and passes the results to the model.
 
 ```typescript
 import { Email } from './email';
@@ -16,7 +16,7 @@ import type { EmailValidationError } from './email';
 import { Role } from './role';
 import type { RoleValidationError } from './role';
 
-// Type union des erreurs VO (pas un enum unique)
+// Type union of VO errors (not a single enum)
 export type UserAccountValidationError =
   | EmailValidationError
   | RoleValidationError;
@@ -25,13 +25,13 @@ export class UserAccount {
   readonly email: Email;
   readonly role: Role;
 
-  // Constructor = simple assignement, pas de logique
+  // Constructor = simple assignment, no logic
   private constructor(email: Email, role: Role) {
     this.email = email;
     this.role = role;
   }
 
-  // Factory — appelle chaque VO, propage l'erreur si echec
+  // Factory — calls each VO, propagates error on failure
   static create(
     email: string,
     role: string,
@@ -54,16 +54,16 @@ export class UserAccount {
 }
 ```
 
-### Trois types de factory
+### Three types of factories
 
-| Pattern | Retour | Quand l'utiliser |
-|---------|--------|------------------|
-| Factory avec validation metier (`create`) | `CommandResult<ValidationError>` | Donnees utilisateur qui peuvent violer des regles metier. L'erreur est un enum metier explicite. |
-| Factory de reconstitution (`reconstitute`) | `T` | Reconstitution depuis des donnees de confiance (DB). Utilise `VO.from()` sur chaque VO, pas de validation. |
-| Factory filtrante | `T \| undefined` | Donnees brutes qui peuvent etre invalides. `undefined` = "pas un element valide", pas une erreur. |
+| Pattern | Return | When to use |
+|---------|--------|-------------|
+| Factory with business validation (`create`) | `CommandResult<ValidationError>` | User data that can violate business rules. The error is an explicit business enum. |
+| Reconstitution factory (`reconstitute`) | `T` | Reconstitution from trusted data (DB). Uses `VO.from()` on each VO, no validation. |
+| Filtering factory | `T \| undefined` | Raw data that may be invalid. `undefined` = "not a valid element", not an error. |
 
 ```typescript
-// Reconstitution depuis la DB — pas de validation, utilise VO.from()
+// Reconstitution from DB — no validation, uses VO.from()
 static reconstitute(id: UUID, email: string, role: string, ...): UserAccount {
   return new UserAccount(
     UserAccountId.from(id),
@@ -78,11 +78,11 @@ static reconstitute(id: UUID, email: string, role: string, ...): UserAccount {
 
 ## Value Object
 
-Objet sans identite, defini par ses valeurs. `private constructor` + `readonly value` + factory statique.
+Object without identity, defined by its values. `private constructor` + `readonly value` + static factory.
 
-### VO avec validation metier (pattern principal)
+### VO with business validation (main pattern)
 
-Chaque propriete ayant une regle metier est un VO dedie avec son propre **enum** d'erreur et `static create()` retournant `CommandResult<VoValidationError>`. Chaque VO expose aussi `static from(value)` pour la reconstitution depuis des donnees de confiance (DB).
+Each property with a business rule is a dedicated VO with its own error **enum** and `static create()` returning `CommandResult<VoValidationError>`. Each VO also exposes `static from(value)` for reconstitution from trusted data (DB).
 
 ```typescript
 export enum EmailValidationError {
@@ -98,12 +98,12 @@ export class Email {
     this.value = value;
   }
 
-  // Reconstitution depuis donnees de confiance (DB) — pas de validation
+  // Reconstitution from trusted data (DB) — no validation
   static from(value: string): Email {
     return new Email(value);
   }
 
-  // Creation avec validation metier — donnees utilisateur
+  // Creation with business validation — user data
   static create(value: string): CommandResult<EmailValidationError> {
     if (!Email.EMAIL_REGEX.test(value)) {
       return CommandResult.failure(EmailValidationError.INVALID_EMAIL_FORMAT);
@@ -113,22 +113,22 @@ export class Email {
 }
 ```
 
-### VO simple (sans validation)
+### Simple VO (without validation)
 
-Pour encapsuler une valeur sans regle metier de validation. `private constructor` + factory statique. Peut contenir de la logique de generation.
+To encapsulate a value without business validation rules. `private constructor` + static factory. May contain generation logic.
 
 ```typescript
-// VO generateur (ex: PlainPassword)
+// Generator VO (e.g., PlainPassword)
 export class PlainPassword {
   private constructor(readonly value: string) {}
 
   static create(): PlainPassword {
-    // logique de generation
+    // generation logic
     return new PlainPassword(generatedValue);
   }
 }
 
-// VO wrapper (ex: HashedPassword)
+// Wrapper VO (e.g., HashedPassword)
 export class HashedPassword {
   private constructor(readonly value: string) {}
 
@@ -138,21 +138,21 @@ export class HashedPassword {
 }
 ```
 
-L'aggregate root orchestre les VOs simples via des methodes dediees :
+The aggregate root orchestrates simple VOs via dedicated methods:
 
 ```typescript
 export class UserAccount {
-  // generatePassword() et createNewPassword() appellent PlainPassword.create()
-  // Le use case hash via le port, puis passe le HashedPassword a create() ou updatePassword()
+  // generatePassword() and createNewPassword() call PlainPassword.create()
+  // The use case hashes via the port, then passes the HashedPassword to create() or updatePassword()
   static generatePassword(): PlainPassword { return PlainPassword.create(); }
   createNewPassword(): PlainPassword { return PlainPassword.create(); }
   updatePassword(hashedPassword: HashedPassword): void { this.hashedPassword = hashedPassword; }
 }
 ```
 
-### VO filtrant (pattern secondaire)
+### Filtering VO (secondary pattern)
 
-Pour les donnees brutes qui peuvent etre invalides. `undefined` = "pas un element valide", pas une erreur.
+For raw data that may be invalid. `undefined` = "not a valid element", not an error.
 
 ```typescript
 export class Release {
@@ -175,18 +175,18 @@ export class Release {
 
 ## Aggregate Root
 
-Point d'entree unique pour un ensemble coherent d'entites/value objects. Orchestre la validation des invariants sur l'ensemble, la construction des relations, et les transformations.
+Single entry point for a coherent set of entities/value objects. Orchestrates invariant validation on the set, relationship construction, and transformations.
 
-### Regle fondamentale : TOUJOURS passer par l'aggregate root
+### Fundamental rule: ALWAYS go through the aggregate root
 
-**JAMAIS acceder directement aux Value Objects depuis le use case pour modifier l'etat de l'aggregate.** Toute mutation d'etat (creation, mise a jour) doit passer par une methode de l'aggregate root.
+**NEVER access Value Objects directly from the use case to modify the aggregate's state.** Any state mutation (creation, update) must go through an aggregate root method.
 
 ```typescript
-// INTERDIT — le use case manipule le VO directement :
+// FORBIDDEN — the use case manipulates the VO directly:
 const plainPassword = PlainPassword.create();
 await repository.updateHashedPassword(email, hash);
 
-// CORRECT — le use case passe par l'aggregate root :
+// CORRECT — the use case goes through the aggregate root:
 const userAccount = await repository.findByEmail(email);
 const plainPassword = userAccount.createNewPassword();
 const hashedPassword = passwordHasher.hash(plainPassword);
@@ -194,18 +194,18 @@ userAccount.updatePassword(hashedPassword);
 await repository.save(userAccount);
 ```
 
-**Consequences sur le repository** : le repository expose `findById`/`findByEmail` + `save`, jamais de methodes qui modifient directement un champ (`updateField`). L'etat change via l'aggregate, puis l'aggregate est sauvegarde.
+**Consequences on the repository**: the repository exposes `findById`/`findByEmail` + `save`, never methods that directly modify a field (`updateField`). State changes via the aggregate, then the aggregate is saved.
 
 ---
 
-## Assertions de validation metier
+## Business validation assertions
 
-### Dans les Value Objects (CommandResult.failure) — pour les validations metier sur les champs
+### In Value Objects (CommandResult.failure) — for business validations on fields
 
-Chaque propriete avec regle metier est un VO dedie. La validation est dans le VO, pas dans l'entite :
+Each property with a business rule is a dedicated VO. Validation is in the VO, not in the entity:
 
 ```typescript
-// Dans le VO (email.ts)
+// In the VO (email.ts)
 static create(value: string): CommandResult<EmailValidationError> {
   if (!Email.EMAIL_REGEX.test(value)) {
     return CommandResult.failure(EmailValidationError.INVALID_EMAIL_FORMAT);
@@ -214,9 +214,9 @@ static create(value: string): CommandResult<EmailValidationError> {
 }
 ```
 
-L'entite appelle chaque VO et propage les erreurs :
+The entity calls each VO and propagates errors:
 ```typescript
-// Dans l'entite (userAccount.ts)
+// In the entity (userAccount.ts)
 static create(email: string, role: string): CommandResult<UserAccountValidationError> {
   const emailResult = Email.create(email);
   if (emailResult.isFailure()) {
@@ -237,14 +237,14 @@ static create(email: string, role: string): CommandResult<UserAccountValidationE
 
 ---
 
-## Resume des patterns
+## Pattern summary
 
-| Concept | Constructeur | Factory | Retour factory | Invariants |
+| Concept | Constructor | Factory | Factory return | Invariants |
 |---------|-------------|---------|----------------|------------|
-| Value Object (validation) | `private` (assignement) | `static create()` | `CommandResult<VoValidationError>` | validation dans `create()`, propre enum d'erreur |
-| Value Object (simple) | `private` (assignement) | `static create()` | `T` (toujours valide) | pas de validation, encapsule une valeur ou genere |
-| Value Object (filtrant) | `private` (assignement) | `static identifyFrom...()` | `T \| undefined` | filtre dans factory |
-| Entite (avec VOs) | `private` (assignement) | `static create()` | `CommandResult<TypeUnionVoErrors>` | appelle chaque VO, propage les erreurs |
-| Aggregate root | `private` (assignation) | `static from...()` / `static generateFrom...()` | `CommandResult<string>` | `assertXxx` → `CommandResult.failure` |
-| Aggregate collection | `private` (assignation) | `static from...()` | `T` (toujours valide) | delegue aux entites |
-| Use Case | `constructor(port)` | — | `CommandResult<E>` | orchestre ports + model (JAMAIS de ports dans le model) |
+| Value Object (validation) | `private` (assignment) | `static create()` | `CommandResult<VoValidationError>` | validation in `create()`, own error enum |
+| Value Object (simple) | `private` (assignment) | `static create()` | `T` (always valid) | no validation, wraps a value or generates |
+| Value Object (filtering) | `private` (assignment) | `static identifyFrom...()` | `T \| undefined` | filter in factory |
+| Entity (with VOs) | `private` (assignment) | `static create()` | `CommandResult<TypeUnionVoErrors>` | calls each VO, propagates errors |
+| Aggregate root | `private` (assignment) | `static from...()` / `static generateFrom...()` | `CommandResult<string>` | `assertXxx` → `CommandResult.failure` |
+| Aggregate collection | `private` (assignment) | `static from...()` | `T` (always valid) | delegates to entities |
+| Use Case | `constructor(port)` | — | `CommandResult<E>` | orchestrates ports + model (NEVER ports in the model) |

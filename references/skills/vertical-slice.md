@@ -1,12 +1,12 @@
 # Vertical Slice Architecture
 
-Organisation du code par feature (vertical slice) plutot que par couche horizontale.
+Code organization by feature (vertical slice) rather than by horizontal layer.
 
 ---
 
-## Principe
+## Principle
 
-Chaque feature est un module autonome co-localise : use case, port, adapter, domaine, tests. Pas de couches horizontales (pas de dossier `services/`, `repositories/`, `controllers/`).
+Each feature is a self-contained co-located module: use case, port, adapter, domain, tests. No horizontal layers (no `services/`, `repositories/`, `controllers/` folders).
 
 ---
 
@@ -14,18 +14,18 @@ Chaque feature est un module autonome co-localise : use case, port, adapter, dom
 
 ```
 src/modules/
-├── {boundedContext}/                     # Bounded context = domaine metier
-│   ├── {entity}.ts                      # Entites du domaine (partagees entre features du BC)
-│   ├── {valueObject}.ts                 # Value Objects du domaine
-│   ├── {aggregate}.ts                   # Aggregate root du domaine
-│   ├── {enumOrType}.ts                  # Types/enums du domaine
-│   ├── rawTypes.ts                      # DTOs bruts (optionnel, si partages entre features)
+├── {boundedContext}/                     # Bounded context = business domain
+│   ├── {entity}.ts                      # Domain entities (shared between BC features)
+│   ├── {valueObject}.ts                 # Domain Value Objects
+│   ├── {aggregate}.ts                   # Domain Aggregate root
+│   ├── {enumOrType}.ts                  # Domain types/enums
+│   ├── rawTypes.ts                      # Raw DTOs (optional, if shared between features)
 │   │
 │   ├── {featureA}/                      # Feature A — vertical slice
 │   │   ├── {featureA}.useCase.ts        # Use case
 │   │   ├── {featureA}.{portName}.ts     # Port (interface)
-│   │   ├── {featureA}.{techno}{PortName}.ts  # Adapter prod
-│   │   └── test/                        # Tests co-localises
+│   │   ├── {featureA}.{techno}{PortName}.ts  # Prod adapter
+│   │   └── test/                        # Co-located tests
 │   │       ├── {featureA}.dsl.ts
 │   │       ├── {featureA}.inMemory{PortName}.ts
 │   │       └── usecase/
@@ -37,57 +37,57 @@ src/modules/
 │       ├── ...
 │       └── test/
 │
-└── shared/                              # Uniquement le code veritablement transversal
+└── shared/                              # Only truly cross-cutting code
     └── result/
         └── commandResult.ts
 ```
 
 ---
 
-## Regles
+## Rules
 
-### Co-localisation
+### Co-location
 
-- Chaque feature contient **tout** ce dont elle a besoin : use case, ports, adapters, tests
-- Les tests sont dans un sous-dossier `test/` de la feature, pas dans un dossier `__tests__/` global
-- L'adapter in-memory (pour les tests) est dans `test/`, l'adapter prod est dans le dossier de la feature
+- Each feature contains **everything** it needs: use case, ports, adapters, tests
+- Tests are in a `test/` subfolder of the feature, not in a global `__tests__/` folder
+- The in-memory adapter (for tests) is in `test/`, the prod adapter is in the feature folder
 
-### Domaine au niveau du bounded context
+### Domain at the bounded context level
 
-- Les entites, value objects et aggregates vivent au niveau du bounded context parent (`modules/{boundedContext}/`)
-- Ils sont partages entre les features du meme bounded context
-- Ils ne sont **jamais** importes depuis un autre bounded context
+- Entities, value objects and aggregates live at the parent bounded context level (`modules/{boundedContext}/`)
+- They are shared between features of the same bounded context
+- They are **never** imported from another bounded context
 
-### Shared = vraiment transversal
+### Shared = truly cross-cutting
 
-- Le dossier `shared/` ne contient que le code utilise par **plusieurs** bounded contexts
-- Types utilitaires (`CommandResult`, etc.) — pas de logique metier
-- Si quelque chose n'est utilise que par un seul bounded context, il va dans ce bounded context
+- The `shared/` folder only contains code used by **multiple** bounded contexts
+- Utility types (`CommandResult`, etc.) — no business logic
+- If something is only used by a single bounded context, it belongs in that bounded context
 
-### Pas de couches horizontales
+### No horizontal layers
 
-Ne **jamais** creer :
-- `src/services/` — la logique est dans les use cases et le domaine
-- `src/repositories/` — ce sont des ports dans chaque feature
-- `src/controllers/` — l'entry point orchestre directement les use cases
-- `src/models/` — les entites sont dans leur bounded context
-- `src/utils/` — les utilitaires sont dans `shared/` ou locaux a la feature
-
----
-
-## Ajout d'une nouvelle feature
-
-1. Identifier le bounded context (`modules/{boundedContext}/`)
-2. Creer un dossier `{featureName}/` dans le bounded context
-3. Creer le use case, le port, l'adapter prod
-4. Creer le dossier `test/` avec DSL, adapter in-memory, driver, spec
-5. Si des entites/VO sont necessaires et n'existent pas encore, les creer au niveau du bounded context
+**Never** create:
+- `src/services/` — logic belongs in use cases and domain
+- `src/repositories/` — these are ports within each feature
+- `src/controllers/` — the entry point directly orchestrates use cases
+- `src/models/` — entities belong in their bounded context
+- `src/utils/` — utilities go in `shared/` or are local to the feature
 
 ---
 
-## Ajout d'un nouveau bounded context
+## Adding a new feature
 
-1. Creer `modules/{newContext}/`
-2. Definir les entites/VO/aggregates du domaine
-3. Creer la premiere feature comme vertical slice
-4. Le nouveau bounded context communique avec les autres via JSON (contrat), jamais par import direct
+1. Identify the bounded context (`modules/{boundedContext}/`)
+2. Create a `{featureName}/` folder in the bounded context
+3. Create the use case, port, prod adapter
+4. Create the `test/` folder with DSL, in-memory adapter, driver, spec
+5. If entities/VOs are needed and don't exist yet, create them at the bounded context level
+
+---
+
+## Adding a new bounded context
+
+1. Create `modules/{newContext}/`
+2. Define the domain entities/VOs/aggregates
+3. Create the first feature as a vertical slice
+4. The new bounded context communicates with others via JSON (contract), never by direct import

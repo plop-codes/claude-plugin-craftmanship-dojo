@@ -1,136 +1,136 @@
-# Phase 2 : Generation des fichiers de propositions
+# Phase 2: Proposal file generation
 
-Les etapes ont ete validees par le tech lead. Generer les fichiers de propositions et mettre a jour la configuration.
-
----
-
-## Etape 1 : Supprimer les anciennes propositions
-
-Si des fichiers de propositions existent deja dans `phases/06-refactoring/proposals/`, les supprimer **apres confirmation du tech lead** :
-
-> "Des propositions existantes ont ete detectees dans `phases/06-refactoring/proposals/`. Je vais les remplacer par les nouvelles etapes validees. Confirmes-tu ?"
-
-Si le tech lead confirme, supprimer tous les fichiers `*.md` dans ce dossier.
-Si le tech lead refuse, conserver les anciens fichiers et ajouter les nouveaux a la suite (numerotation continue).
+The steps have been validated by the tech lead. Generate the proposal files and update the configuration.
 
 ---
 
-## Etape 2 : Generer les fichiers de propositions
+## Step 1: Delete old proposals
 
-Pour chaque etape validee, creer un fichier dans `phases/06-refactoring/proposals/`.
+If proposal files already exist in `phases/06-refactoring/proposals/`, delete them **after tech lead confirmation**:
 
-### Nommage des fichiers
+> "Existing proposals were detected in `phases/06-refactoring/proposals/`. I will replace them with the newly validated steps. Do you confirm?"
 
-Format : `{numero sur 2 chiffres}-{slug}.md`
+If the tech lead confirms, delete all `*.md` files in that folder.
+If the tech lead refuses, keep the old files and add the new ones after (continuing numbering).
 
-Exemples :
+---
+
+## Step 2: Generate proposal files
+
+For each validated step, create a file in `phases/06-refactoring/proposals/`.
+
+### File naming
+
+Format: `{2-digit number}-{slug}.md`
+
+Examples:
 - `01-vertical-slices.md`
 - `02-entity-encapsulation.md`
 - `03-value-objects.md`
 - `04-in-memory-repositories.md`
 
-### Format de chaque fichier
+### Format for each file
 
-Chaque fichier DOIT suivre exactement ce format (compatible avec le skill onboarding) :
+Each file MUST follow exactly this format (compatible with the onboarding skill):
 
 ```markdown
-# Proposition {N} : {Titre}
+# Proposal {N}: {Title}
 
-## References necessaires
+## Required references
 
-{Liste des references pertinentes, si applicable}
-- Skill : `{skill-key}`
-- Exemple : `{example-key}`
+{List of relevant references, if applicable}
+- Skill: `{skill-key}`
+- Example: `{example-key}`
 
-{Si aucune reference n'est pertinente, ecrire : "Aucune reference embarquee. Se baser sur le code existant du projet."}
+{If no reference is relevant, write: "No bundled reference. Rely on existing project code."}
 
 ## Instructions
 
-**Inspecter** : {description precise de ce qu'il faut verifier dans le code du developpeur en onboarding — quels fichiers regarder, quels patterns chercher}
+**Inspect**: {precise description of what to check in the onboarding developer's code — which files to look at, which patterns to search for}
 
-**Skip si** : {conditions ou cette proposition ne s'applique pas — par exemple si le dev a deja applique cette pratique}
+**Skip if**: {conditions where this proposal doesn't apply — for example if the dev already applied this practice}
 
-**Pratique enseignee** : {explication pedagogique — quelle convention de la codebase le dev apprend ici, pourquoi l'equipe fait comme ca, avec des exemples de fichiers existants dans le projet qui illustrent cette pratique}
+**Practice taught**: {pedagogical explanation — which codebase convention the dev learns here, why the team does it this way, with examples of existing project files that illustrate this practice}
 
-**Exemple** : {quoi montrer — fichiers existants de la codebase qui servent de modele. Privilegier les fichiers reels du projet plutot que les fichiers de reference embarques, puisque l'objectif est d'enseigner les pratiques de CETTE codebase.}
+**Example**: {what to show — existing codebase files that serve as a model. Prefer real project files over bundled reference files, since the goal is to teach THIS codebase's practices.}
 
-**STOP** — attendre decision
+**STOP** — wait for decision
 ```
 
-### Regles de generation
+### Generation rules
 
-1. **Chaque fichier doit etre autonome** : lisible et comprehensible sans contexte exterieur
-2. **Les instructions doivent etre concretes** : citer des patterns de fichiers specifiques au langage/framework detecte
-3. **La "Pratique enseignee" doit etre pedagogique** : expliquer la convention comme a un developpeur qui decouvre la codebase pour la premiere fois
-4. **Privilegier les exemples du projet** : les fichiers existants de la codebase sont les meilleurs exemples puisqu'ils montrent exactement comment l'equipe fait. Les fichiers de reference embarques du plugin ne sont utiles que si la codebase n'a pas d'exemple suffisant.
-5. **Le "Inspecter" doit etre adapte au framework** : utiliser les patterns de detection du framework identifie dans la phase d'analyse
+1. **Each file must be self-contained**: readable and understandable without external context
+2. **Instructions must be concrete**: cite file patterns specific to the detected language/framework
+3. **The "Practice taught" must be pedagogical**: explain the convention as if to a developer discovering the codebase for the first time
+4. **Prefer project examples**: existing codebase files are the best examples since they show exactly how the team does it. The plugin's bundled reference files are only useful if the codebase doesn't have a sufficient example.
+5. **The "Inspect" must be adapted to the framework**: use detection patterns from the framework identified in the analysis phase
 
 ---
 
-## Etape 3 : Mettre a jour config.json
+## Step 3: Update config.json
 
-Mettre a jour le fichier `config.json` a la racine du plugin :
+Update the `config.json` file at the plugin root:
 
-### Section `proposals`
+### `proposals` section
 
-Remplacer le contenu de `proposals` par les nouvelles cles, une par etape validee :
+Replace the `proposals` content with the new keys, one per validated step:
 
 ```json
 {
   "proposals": {
-    "{slug-etape-1}": true,
-    "{slug-etape-2}": true,
+    "{step-1-slug}": true,
+    "{step-2-slug}": true,
     ...
   }
 }
 ```
 
-Les slugs doivent correspondre exactement aux noms de fichiers (sans numero ni extension).
-Exemple : fichier `03-vertical-slices.md` → cle `vertical-slices`.
+Slugs must exactly match the file names (without number or extension).
+Example: file `03-vertical-slices.md` → key `vertical-slices`.
 
-### Section `audit`
+### `audit` section
 
-Mettre a jour la section `audit` avec les paths scannes :
+Update the `audit` section with the scanned paths:
 
 ```json
 {
   "audit": {
-    "scan-paths": ["{paths scannes}"]
+    "scan-paths": ["{scanned paths}"]
   }
 }
 ```
 
 ---
 
-## Etape 4 : Mettre a jour la table de mapping Phase 6 dans le skill onboarding
+## Step 4: Update the Phase 6 mapping table in the onboarding skill
 
-Lire le fichier `skills/onboarding/SKILL.md` et mettre a jour la table de mapping Phase 6 (section "Phase 6 : Refactoring") pour refleter les nouvelles propositions.
+Read the `skills/onboarding/SKILL.md` file and update the Phase 6 mapping table (section "Phase 6: Refactoring") to reflect the new proposals.
 
-Format de la table :
+Table format:
 
 ```markdown
-| Cle config | Fichier |
-|------------|---------|
-| `{slug}` | `phases/06-refactoring/proposals/{numero}-{slug}.md` |
+| Config key | File |
+|------------|------|
+| `{slug}` | `phases/06-refactoring/proposals/{number}-{slug}.md` |
 ```
 
-Une ligne par proposition generee.
+One line per generated proposal.
 
 ---
 
-## Etape 5 : Resume final
+## Step 5: Final summary
 
-Presenter un resume au tech lead :
+Present a summary to the tech lead:
 
-> **Generation terminee.**
+> **Generation complete.**
 >
-> **{N} etapes creees** dans `phases/06-refactoring/proposals/` :
-> - `01-{slug}.md` — {titre}
-> - `02-{slug}.md` — {titre}
+> **{N} steps created** in `phases/06-refactoring/proposals/`:
+> - `01-{slug}.md` — {title}
+> - `02-{slug}.md` — {title}
 > - ...
 >
-> **`config.json` mis a jour** avec les nouvelles cles de propositions.
+> **`config.json` updated** with the new proposal keys.
 >
-> **`skills/onboarding/SKILL.md` mis a jour** avec la table de mapping Phase 6.
+> **`skills/onboarding/SKILL.md` updated** with the Phase 6 mapping table.
 >
-> Les developpeurs peuvent maintenant utiliser `/onboarding` pour etre guides a travers ces etapes de refactoring.
+> Developers can now use `/onboarding` to be guided through these refactoring steps.

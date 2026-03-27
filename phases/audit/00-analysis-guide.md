@@ -1,172 +1,172 @@
-# Phase 1 : Analyse des pratiques existantes
+# Phase 1: Existing practices analysis
 
-L'objectif est d'identifier les pratiques, patterns et conventions deja en place dans la codebase, puis de proposer des etapes de refactoring qui les enseignent progressivement a un developpeur qui ne les maitrise pas encore.
+The objective is to identify the practices, patterns, and conventions already in place in the codebase, then propose refactoring steps that progressively teach them to a developer who doesn't master them yet.
 
-**On ne cherche pas ce qui manque. On cherche ce qui existe pour l'enseigner.**
+**We're not looking for what's missing. We're looking for what exists to teach it.**
 
 ---
 
-## Section 1 : Detection de l'environnement
+## Section 1: Environment detection
 
-Avant toute analyse, identifier l'ecosysteme technique du projet.
+Before any analysis, identify the project's technical ecosystem.
 
 ### Instructions
 
-1. **Lister la racine du projet** : `ls` sur le dossier racine du projet cible (pas le plugin)
-2. **Detecter le langage et le framework** en lisant les fichiers de configuration :
+1. **List the project root**: `ls` on the target project's root folder (not the plugin)
+2. **Detect the language and framework** by reading configuration files:
 
-| Fichier | Indique |
-|---------|---------|
-| `package.json` | Node.js / TypeScript — lire `dependencies` pour le framework (NestJS, Express, Fastify, Koa...) |
-| `tsconfig.json` | TypeScript confirme |
-| `pom.xml` | Java / Maven — chercher Spring Boot, Quarkus, Micronaut dans les dependances |
+| File | Indicates |
+|------|-----------|
+| `package.json` | Node.js / TypeScript — read `dependencies` for the framework (NestJS, Express, Fastify, Koa...) |
+| `tsconfig.json` | TypeScript confirmed |
+| `pom.xml` | Java / Maven — look for Spring Boot, Quarkus, Micronaut in dependencies |
 | `build.gradle` / `build.gradle.kts` | Java/Kotlin / Gradle |
-| `go.mod` | Go — chercher le framework (Gin, Echo, Fiber, Chi...) |
-| `requirements.txt` / `pyproject.toml` / `Pipfile` | Python — chercher Django, Flask, FastAPI |
-| `*.csproj` / `*.sln` | C# / .NET — chercher ASP.NET Core |
-| `Cargo.toml` | Rust — chercher Actix, Axum, Rocket |
-| `Gemfile` | Ruby — chercher Rails, Sinatra |
+| `go.mod` | Go — look for the framework (Gin, Echo, Fiber, Chi...) |
+| `requirements.txt` / `pyproject.toml` / `Pipfile` | Python — look for Django, Flask, FastAPI |
+| `*.csproj` / `*.sln` | C# / .NET — look for ASP.NET Core |
+| `Cargo.toml` | Rust — look for Actix, Axum, Rocket |
+| `Gemfile` | Ruby — look for Rails, Sinatra |
 
-3. **Detecter l'ORM / acces donnees** :
-   - TypeScript : TypeORM, Prisma, Sequelize, Knex, Drizzle, MikroORM
-   - Java : Hibernate, JPA, MyBatis, jOOQ
-   - C# : Entity Framework, Dapper, NHibernate
-   - Go : GORM, sqlx, ent
-   - Python : SQLAlchemy, Django ORM, Tortoise
+3. **Detect the ORM / data access**:
+   - TypeScript: TypeORM, Prisma, Sequelize, Knex, Drizzle, MikroORM
+   - Java: Hibernate, JPA, MyBatis, jOOQ
+   - C#: Entity Framework, Dapper, NHibernate
+   - Go: GORM, sqlx, ent
+   - Python: SQLAlchemy, Django ORM, Tortoise
 
-4. **Detecter le framework de test** :
-   - TypeScript : Vitest, Jest, Mocha
-   - Java : JUnit, TestNG, Spock
-   - C# : xUnit, NUnit, MSTest
-   - Go : testing (builtin), testify
-   - Python : pytest, unittest
+4. **Detect the test framework**:
+   - TypeScript: Vitest, Jest, Mocha
+   - Java: JUnit, TestNG, Spock
+   - C#: xUnit, NUnit, MSTest
+   - Go: testing (builtin), testify
+   - Python: pytest, unittest
 
-5. **Identifier la structure des dossiers** : lister les dossiers sous le chemin source principal (`src/`, `app/`, `lib/`, `internal/`, `cmd/`...)
+5. **Identify the folder structure**: list folders under the main source path (`src/`, `app/`, `lib/`, `internal/`, `cmd/`...)
 
-Presenter un resume :
-> **Environnement detecte** : {langage} / {framework} / {ORM} / {test framework}
-> **Structure source** : {chemin principal} avec {description rapide}
-
----
-
-## Section 2 : Identification des pratiques existantes
-
-Scanner la codebase pour reperer **les pratiques et conventions que l'equipe utilise deja et applique de maniere coherente**. Ne lister que ce qui est effectivement en place — pas ce qui est absent, incomplet, ou "a faire".
-
-**Regle** : une pratique n'est retenue que si elle est illustree par **au moins un fichier existant** qui l'applique correctement. "Les entites n'ont pas de factory method" n'est PAS une pratique — c'est une absence. Ne pas la lister.
-
-### Quoi chercher
-
-Pour chaque categorie ci-dessous, inspecter la codebase et noter **uniquement** les pratiques effectivement trouvees, avec des exemples concrets (noms de fichiers, extraits de code).
-
-#### Organisation du code
-- Comment les dossiers sont-ils structures ? (par feature, par couche technique, par domaine ?)
-- Comment les fichiers sont-ils nommes ? (conventions de nommage)
-- Y a-t-il une separation controller / service / repository ?
-- Y a-t-il des modules / bounded contexts / packages ?
-
-#### Patterns de code
-- Comment les entites/modeles sont-ils construits ? (constructeurs publics, factory methods, builders ?)
-- Comment la logique metier est-elle organisee ? (dans les services, dans les entites, dans des use cases ?)
-- Comment les erreurs sont-elles gerees ? (exceptions, result types, error codes ?)
-- Comment les validations sont-elles faites ? (dans les controllers, dans les entites, avec des value objects, avec des DTOs ?)
-- Comment les dependances sont-elles injectees ? (constructeur, framework DI, imports directs ?)
-
-#### Patterns de test
-- Quels types de tests existent ? (E2E, integration, unitaires ?)
-- Comment les tests sont-ils structures ? (DSL/Driver, arrange/act/assert, given/when/then ?)
-- Comment les dependances sont-elles remplacees dans les tests ? (mocks, stubs, in-memory implementations ?)
-- Y a-t-il une infrastructure de test partagee ? (TestApp, fixtures, helpers ?)
-
-#### Acces aux donnees
-- Comment les lectures sont-elles faites ? (ORM, SQL brut, query builders ?)
-- Comment les ecritures sont-elles faites ? (via repository, via ORM direct, via use case ?)
-- Y a-t-il des interfaces/ports pour les repositories ?
-
-#### Autres conventions
-- Toute autre pratique ou convention notable, specifique a cette codebase
-
-**Important** : si une categorie n'a aucune pratique effective (ex: aucun test n'existe), ne rien lister pour cette categorie. Ne pas ecrire "Aucun test existant" — c'est une absence, pas une pratique.
+Present a summary:
+> **Detected environment**: {language} / {framework} / {ORM} / {test framework}
+> **Source structure**: {main path} with {brief description}
 
 ---
 
-## Section 3 : Construction des etapes de refactoring
+## Section 2: Identifying existing practices
 
-A partir des pratiques identifiees, construire des etapes qui les enseignent a un nouveau developpeur.
+Scan the codebase to spot **the practices and conventions the team already uses and applies consistently**. Only list what is actually in place — not what is absent, incomplete, or "to do".
 
-### Regle absolue
+**Rule**: a practice is only retained if it is illustrated by **at least one existing file** that applies it correctly. "Entities don't have factory methods" is NOT a practice — it's an absence. Do not list it.
 
-**Ne proposer QUE des pratiques qui existent deja dans la codebase.** Si une pratique n'est pas illustree par au moins un fichier existant dans le projet, elle ne doit PAS devenir une etape de refactoring.
+### What to look for
 
-Exemples de violations a ne JAMAIS commettre :
-- La codebase n'a pas de Value Objects → ne PAS proposer d'introduire des Value Objects
-- La codebase n'a pas de CommandResult → ne PAS proposer d'introduire un CommandResult
-- Les entites n'ont pas de factory method → ne PAS proposer d'encapsuler les entites
-- Il n'y a pas de tests → ne PAS proposer d'ecrire des tests
+For each category below, inspect the codebase and note **only** the practices actually found, with concrete examples (file names, code excerpts).
 
-Le tech lead peut ajouter des pratiques aspirationnelles s'il le souhaite — mais le skill ne doit JAMAIS les inventer lui-meme.
+#### Code organization
+- How are folders structured? (by feature, by technical layer, by domain?)
+- How are files named? (naming conventions)
+- Is there a controller / service / repository separation?
+- Are there modules / bounded contexts / packages?
 
-### Principe
+#### Code patterns
+- How are entities/models built? (public constructors, factory methods, builders?)
+- How is business logic organized? (in services, in entities, in use cases?)
+- How are errors handled? (exceptions, result types, error codes?)
+- How are validations done? (in controllers, in entities, with value objects, with DTOs?)
+- How are dependencies injected? (constructor, DI framework, direct imports?)
 
-Chaque etape de refactoring correspond a **une pratique deja appliquee dans la codebase** que le developpeur doit apprendre. L'etape le guide pour appliquer cette meme pratique sur le code qu'il vient d'ecrire pendant l'onboarding (phases 1-5).
+#### Test patterns
+- What types of tests exist? (E2E, integration, unit?)
+- How are tests structured? (DSL/Driver, arrange/act/assert, given/when/then?)
+- How are dependencies replaced in tests? (mocks, stubs, in-memory implementations?)
+- Is there shared test infrastructure? (TestApp, fixtures, helpers?)
 
-### Algorithme
+#### Data access
+- How are reads done? (ORM, raw SQL, query builders?)
+- How are writes done? (via repository, via direct ORM, via use case?)
+- Are there interfaces/ports for repositories?
 
-1. **Filtrer** : ne garder que les pratiques identifiees en section 2 qui sont **effectivement illustrees par du code existant** dans la codebase. Ecarter tout ce qui est absent, partiel, ou "a faire"
-2. **Ordonner pedagogiquement** : des plus simples et fondamentales aux plus avancees
-   - Les pratiques de structure/organisation en premier (facile a observer)
-   - Les patterns de code ensuite (entites, erreurs, validations)
-   - Les pratiques de test en dernier (necessitent de comprendre le reste)
-3. **Formuler chaque pratique comme une etape de refactoring** : "voici comment on fait dans ce projet, applique-le a ton code"
-4. **Citer des exemples existants** pour chaque etape : des fichiers de la codebase qui illustrent la pratique
+#### Other conventions
+- Any other notable practice or convention specific to this codebase
 
-### Pour chaque etape, preparer :
-- **Titre court** (ex: "Organiser le code en vertical slices", "Separer les lectures avec un repository SQL")
-- **La pratique enseignee** : quelle convention/pattern de la codebase le dev va apprendre
-- **Exemples existants** : 1-3 fichiers de la codebase qui illustrent **deja** cette pratique (pas des fichiers "a refactorer")
-- **Ce que le dev devra faire** : appliquer cette pratique au code ecrit pendant les phases precedentes de l'onboarding
+**Important**: if a category has no actual practice (e.g., no tests exist), list nothing for that category. Do not write "No existing tests" — that's an absence, not a practice.
 
 ---
 
-## Section 4 : Presentation au tech lead
+## Section 3: Building refactoring steps
 
-Presenter les resultats dans ce format :
+From the identified practices, build steps that teach them to a new developer.
+
+### Absolute rule
+
+**Only propose practices that already exist in the codebase.** If a practice is not illustrated by at least one existing file in the project, it must NOT become a refactoring step.
+
+Examples of violations to NEVER commit:
+- The codebase has no Value Objects → do NOT propose introducing Value Objects
+- The codebase has no CommandResult → do NOT propose introducing a CommandResult
+- Entities don't have factory methods → do NOT propose encapsulating entities
+- There are no tests → do NOT propose writing tests
+
+The tech lead can add aspirational practices if they wish — but the skill must NEVER invent them itself.
+
+### Principle
+
+Each refactoring step corresponds to **a practice already applied in the codebase** that the developer needs to learn. The step guides them to apply that same practice to the code they just wrote during onboarding (phases 1-5).
+
+### Algorithm
+
+1. **Filter**: only keep practices identified in section 2 that are **actually illustrated by existing code** in the codebase. Discard anything absent, partial, or "to do"
+2. **Order pedagogically**: from simplest and most fundamental to most advanced
+   - Structure/organization practices first (easy to observe)
+   - Code patterns next (entities, errors, validations)
+   - Test practices last (require understanding the rest)
+3. **Formulate each practice as a refactoring step**: "here's how we do it in this project, apply it to your code"
+4. **Cite existing examples** for each step: codebase files that illustrate the practice
+
+### For each step, prepare:
+- **Short title** (e.g., "Organize code in vertical slices", "Separate reads with a SQL repository")
+- **The practice being taught**: which codebase convention/pattern the dev will learn
+- **Existing examples**: 1-3 codebase files that **already** illustrate this practice (not files "to refactor")
+- **What the dev will need to do**: apply this practice to the code written during the previous onboarding phases
+
+---
+
+## Section 4: Presentation to the tech lead
+
+Present the results in this format:
 
 ```
-=== Pratiques identifiees ===
+=== Identified practices ===
 
-Environnement detecte : {langage} / {framework} / {ORM} / {test framework}
+Detected environment: {language} / {framework} / {ORM} / {test framework}
 
-Voici les pratiques et conventions que j'ai identifiees dans votre codebase :
+Here are the practices and conventions I identified in your codebase:
 
-1. {pratique} — ex: {fichier(s) concret(s)}
-2. {pratique} — ex: {fichier(s) concret(s)}
+1. {practice} — e.g.: {concrete file(s)}
+2. {practice} — e.g.: {concrete file(s)}
 ...
 
-=== Etapes de refactoring proposees pour l'onboarding ===
+=== Proposed refactoring steps for onboarding ===
 
-Ces etapes enseigneront progressivement ces pratiques a un nouveau developpeur :
+These steps will progressively teach these practices to a new developer:
 
-Etape 1 : {titre}
-  → Pratique enseignee : {description}
-  → Exemples dans la codebase : {fichiers}
+Step 1: {title}
+  → Practice taught: {description}
+  → Examples in the codebase: {files}
 
-Etape 2 : {titre}
-  → Pratique enseignee : {description}
-  → Exemples dans la codebase : {fichiers}
+Step 2: {title}
+  → Practice taught: {description}
+  → Examples in the codebase: {files}
 
 ...
 ```
 
 ---
 
-**STOP** — Attendre la reaction du tech lead.
+**STOP** — Wait for the tech lead's reaction.
 
-Le tech lead peut :
-- **Valider** tel quel → passer a la phase de generation
-- **Retirer** des etapes → les exclure
-- **Reordonner** des etapes → ajuster l'ordre
-- **Ajouter** des etapes custom → les integrer
-- **Modifier** les details d'une etape → ajuster
+The tech lead can:
+- **Validate** as-is → proceed to the generation phase
+- **Remove** steps → exclude them
+- **Reorder** steps → adjust the order
+- **Add** custom steps → integrate them
+- **Modify** step details → adjust
 
-Une fois les etapes validees, passer a la phase de generation (`01-generation.md`).
+Once the steps are validated, proceed to the generation phase (`01-generation.md`).
