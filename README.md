@@ -98,22 +98,50 @@ Par defaut, le plugin embarque des fichiers d'exemple. Pour utiliser vos propres
 ```
 onboarding-backend/
 ├── plugin.json                    # Manifeste
-├── config.json                    # Configuration (proposals + references)
-├── skills/onboarding/SKILL.md     # Orchestrateur
-├── phases/                        # 6 phases (fixes, toujours executees)
+├── config.json                    # Configuration (proposals + references + audit)
+├── skills/
+│   ├── onboarding/SKILL.md        # Orchestrateur onboarding
+│   └── audit/SKILL.md             # Orchestrateur audit (diagnostic + generation)
+├── phases/
 │   ├── 01-scenario-retrieval.md
 │   ├── 02-test-generation.md
 │   ├── 03-pedagogical-explanation.md
 │   ├── 04-free-development.md
 │   ├── 05-validation.md
-│   └── 06-refactoring/
-│       ├── preambule.md
-│       ├── closure.md
-│       └── proposals/             # 8 propositions (configurables)
+│   ├── 06-refactoring/
+│   │   ├── preambule.md
+│   │   ├── closure.md
+│   │   └── proposals/             # Propositions (generees par /audit ou manuelles)
+│   └── audit/
+│       ├── 00-analysis-guide.md   # Guide d'analyse de la codebase
+│       └── 01-generation.md       # Generation des fichiers de propositions
 ├── references/
 │   ├── skills/                    # 3 skills embarques
 │   └── examples/                  # 11 fichiers TypeScript embarques
 └── README.md
+```
+
+## Les 2 skills
+
+### `/onboarding` — Coaching interactif du developpeur
+
+Guide un nouveau developpeur a travers l'implementation d'une feature backend, de bout en bout. Utilise les propositions de refactoring configurees (par defaut ou generees par `/audit`).
+
+### `/audit` — Diagnostic et generation de roadmap refactoring
+
+Outil pour tech leads. Analyse une codebase backend et genere des propositions de refactoring pedagogiquement ordonnees pour l'onboarding.
+
+**Flow :**
+1. Scan de la codebase (langage, framework, structure, patterns)
+2. Diagnostic sur 7 dimensions (couches, use cases, tests E2E, rich domain, tests unitaires, TDD, DDD)
+3. Presentation de la roadmap au tech lead pour validation
+4. Generation des fichiers de propositions dans `phases/06-refactoring/proposals/` et mise a jour de `config.json`
+
+**Agnostique** : fonctionne sur n'importe quel langage et framework backend (TypeScript, Java, C#, Go, Python...).
+
+Invoquer :
+```
+/craftmanship-dojo:audit
 ```
 
 ## Les 6 phases

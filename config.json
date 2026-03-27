@@ -1,6 +1,19 @@
 {
   "language": "fr",
 
+  "audit": {
+    "scan-paths": ["src/"],
+    "default-levels": {
+      "layer-separation": true,
+      "usecases-screaming-archi": true,
+      "e2e-tests": true,
+      "rich-domain-model": true,
+      "unit-tests-clean-archi": true,
+      "tdd": true,
+      "ddd": true
+    }
+  },
+
   "proposals": {
     "vertical-slices": true,
     "controller-purity": true,

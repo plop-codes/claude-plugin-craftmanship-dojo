@@ -60,7 +60,9 @@ Les 6 phases s'executent **toujours dans l'ordre**, sans exception. Lire chaque 
 ### Phase 6 : Refactoring
 
 1. Lire `${CLAUDE_SKILL_DIR}/../../phases/06-refactoring/preambule.md` et suivre ses instructions
-2. Pour chaque cle dans `config.proposals` ou la valeur est `true`, lire le fichier de proposition correspondant :
+2. Pour chaque cle dans `config.proposals` ou la valeur est `true`, lire le fichier de proposition correspondant.
+
+<!-- Table generee par /audit — modifier via le skill audit, pas manuellement -->
 
 | Cle config | Fichier |
 |------------|---------|
@@ -72,6 +74,8 @@ Les 6 phases s'executent **toujours dans l'ordre**, sans exception. Lire chaque 
 | `command-result` | `phases/06-refactoring/proposals/06-command-result.md` |
 | `unit-tests` | `phases/06-refactoring/proposals/07-unit-tests.md` |
 | `sql-reads` | `phases/06-refactoring/proposals/08-sql-reads.md` |
+
+<!-- Fin table generee par /audit -->
 
 3. Lire `${CLAUDE_SKILL_DIR}/../../phases/06-refactoring/closure.md` et suivre ses instructions
 
